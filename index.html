@@ -67,31 +67,312 @@
       display: none;
     }
 
-    .post-hero {
+    /* ========== NAVBAR ========== */
+    .site-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem clamp(1.5rem, 4vw, 3rem);
+      mix-blend-mode: difference;
+      pointer-events: none;
+    }
+
+    .site-nav > * {
+      pointer-events: auto;
+    }
+
+    .nav-logo {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-decoration: none;
+      transition: color 0.6s ease;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.75rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-decoration: none;
+      transition: color 0.6s ease, opacity 0.3s ease;
+      opacity: 0.85;
+    }
+
+    .nav-links a:hover {
+      opacity: 1;
+    }
+
+    .site-nav.nav-light .nav-logo,
+    .site-nav.nav-light .nav-links a {
+      color: #0a0a0a;
+    }
+
+    /* ========== SCROLL INDICATOR ========== */
+    .scroll-indicator {
+      position: absolute;
+      left: 50%;
+      bottom: 2.5rem;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      pointer-events: none;
+    }
+
+    .scroll-indicator span {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: transparent;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(255, 255, 255, 0.9) 45%,
+        rgba(255, 255, 255, 1) 50%,
+        rgba(255, 255, 255, 0.9) 55%,
+        rgba(255, 255, 255, 0.5) 100%
+      );
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+
+    .scroll-arrows {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+      animation: arrowBounce 1s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+
+    .scroll-arrows span {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 100% 0;
+      }
+      100% {
+        background-position: -100% 0;
+      }
+    }
+
+    @keyframes arrowBounce {
+      0%, 100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      20% {
+        transform: translateY(12px);
+        opacity: 0.4;
+      }
+      40% {
+        transform: translateY(12px);
+        opacity: 0.4;
+      }
+    }
+
+    /* ========== ABOUT ========== */
+    .about-section {
       position: relative;
       z-index: 10;
-      background: #c29264;
-      color: #ffffff;
-      padding: 2rem;
-      text-align: center;
+      background: #ffffff;
+      color: #0a0a0a;
+      padding: clamp(5rem, 10vw, 9rem) 0;
+    }
+
+    .about-inner {
+      width: min(calc(100% - 48px), 900px);
+      margin-inline: auto;
+    }
+
+    /* ========== ABOUT / SERVICES LAYOUT ========== */
+    .split-section {
+      position: relative;
+      z-index: 10;
+      background: #ffffff;
+      color: #0a0a0a;
+      padding: clamp(5rem, 10vw, 9rem) 0;
+    }
+
+    .split-inner {
+      width: min(calc(100% - 48px), 1200px);
+      margin-inline: auto;
+      display: grid;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    @media (min-width: 768px) {
+      .split-inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+      }
+    }
+
+    .split-content {
+      min-width: 0;
+    }
+
+    .split-label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #6b6b6b;
+      margin-bottom: 1.25rem;
+    }
+
+    .split-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.4rem, 5vw, 3.4rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      color: #0a0a0a;
+      margin-bottom: 1.5rem;
+    }
+
+    .split-text {
+      font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+      line-height: 1.75;
+      color: #3a3a3a;
+      max-width: 52ch;
+    }
+
+    .split-motto {
+      margin-top: 2.25rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.2rem, 2vw, 1.55rem);
+      font-weight: 500;
+      line-height: 1.55;
+      color: #0a0a0a;
+      font-style: italic;
+    }
+
+    .split-motto em {
+      font-style: normal;
+      font-weight: 600;
+      color: #7a5c2e;
+    }
+
+    .split-visual {
+      position: relative;
+      min-height: 420px;
+    }
+
+    .compass-canvas {
+      position: sticky;
+      top: 20vh;
+      width: 100%;
+      height: 60vh;
+      max-height: 420px;
+      display: block;
+    }
+
+    @media (max-width: 767px) {
+      .split-visual {
+        min-height: 320px;
+      }
+      .compass-canvas {
+        max-height: 360px;
+      }
+    }
+
+    /* ========== REDUCED MOTION ========== */
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-indicator span {
+        animation: none;
+        color: rgba(255, 255, 255, 0.7);
+        background: none;
+        -webkit-text-fill-color: rgba(255, 255, 255, 0.7);
+      }
+      .scroll-arrows {
+        animation: none;
+        opacity: 0.7;
+      }
     }
   </style>
 </head>
-<body>
-  <div class="hero-scroll-container" id="hero-container">
-    <div class="hero-sticky">
-      <canvas id="hero-canvas" aria-label="VEBMORE cinematic scroll animation" role="img"></canvas>
-      <div class="hero-loader" id="hero-loader">
-        <span>VEBMORE</span>
+  <body>
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="nav-logo" href="/">VEBMORE</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+      </ul>
+    </nav>
+
+    <!-- ==================== HERO ==================== -->
+    <div class="hero-scroll-container" id="hero-container">
+      <div class="hero-sticky">
+        <canvas id="hero-canvas" aria-label="VEBMORE cinematic scroll animation" role="img"></canvas>
+        <div class="hero-loader" id="hero-loader">
+          <span>VEBMORE</span>
+        </div>
+        <div class="scroll-indicator" aria-hidden="true">
+          <span>Scroll to explore</span>
+          <div class="scroll-arrows">
+            <span>&#x2193;</span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="post-hero">
-    <p style="opacity: 0.6; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;">Scroll back up to replay</p>
-  </div>
+    <!-- ==================== ABOUT ==================== -->
+    <section class="split-section" id="about">
+      <div class="split-inner">
+        <div class="split-content reveal-stagger">
+          <span class="split-label">About Vebmore</span>
+          <h2 class="split-title">A creative digital studio for the modern web.</h2>
+          <p class="split-text">
+            Vebmore is a focused digital agency building premium websites with quiet confidence. 
+            We combine design sensibility with clean engineering to produce work that feels considered, 
+            intentional, and enduring.
+          </p>
+          <blockquote class="split-motto">
+            <em>You Dream,</em><br />
+            We <em>Design,</em><br />
+            We <em>Develop,</em><br />
+            We <em>Deliver.</em>
+          </blockquote>
+        </div>
+        <div class="split-visual">
+          <canvas class="compass-canvas" id="compass-canvas" aria-hidden="true"></canvas>
+        </div>
+      </div>
+    </section>
 
-  <script>
+    <script>
     (function() {
       const FRAME_PATH = "./frames/";
       const FRAME_PREFIX = "frame_";
@@ -150,36 +431,40 @@
         canvas.style.height = `${displayHeight}px`;
       }
 
-      function renderFrame(img, frameIndex) {
+      function renderFrame(img, frameIndex, dissolveProgress) {
         if (!img || !img.complete || img.naturalWidth === 0) return;
-
-        const dissolveStart = frameCount - DISSOLVE_FRAMES;
-        let dissolveProgress = 0;
-        if (frameIndex >= dissolveStart) {
-          const dissolveRange = frameCount - 1 - dissolveStart;
-          if (dissolveRange > 0) {
-            dissolveProgress = (frameIndex - dissolveStart) / dissolveRange;
-          }
-        }
-        dissolveProgress = Math.max(0, Math.min(1, dissolveProgress));
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = "#c29264";
+        const bgR = Math.round(194 + (255 - 194) * dissolveProgress);
+        const bgG = Math.round(146 + (255 - 146) * dissolveProgress);
+        const bgB = Math.round(100 + (255 - 100) * dissolveProgress);
+        ctx.fillStyle = `rgb(${bgR}, ${bgG}, ${bgB})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.globalAlpha = 1 - dissolveProgress;
-
+        ctx.save();
         roundRect(ctx, 0, 0, canvas.width, canvas.height, CORNER_RADIUS);
         ctx.clip();
 
+        ctx.globalAlpha = 1 - dissolveProgress;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
+        ctx.globalAlpha = dissolveProgress;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.restore();
+
         if (logoLoaded && logoImg) {
+          ctx.save();
+          roundRect(ctx, 0, 0, canvas.width, canvas.height, CORNER_RADIUS);
+          ctx.clip();
           const logoHeight = (logoImg.naturalHeight / logoImg.naturalWidth) * LOGO_WIDTH;
           const logoX = FRAME_WIDTH - LOGO_WIDTH - LOGO_PADDING_RIGHT;
           const logoY = FRAME_HEIGHT - logoHeight - LOGO_PADDING_BOTTOM;
+          ctx.globalAlpha = 1 - dissolveProgress;
           ctx.drawImage(logoImg, logoX, logoY, LOGO_WIDTH, logoHeight);
+          ctx.restore();
         }
 
         ctx.globalAlpha = 1;
@@ -223,8 +508,26 @@
           }
         }
 
+        const dissolveStart = frameCount - DISSOLVE_FRAMES;
+        let dissolveProgress = 0;
+        if (frameIndex >= dissolveStart) {
+          const dissolveRange = frameCount - 1 - dissolveStart;
+          if (dissolveRange > 0) {
+            dissolveProgress = (frameIndex - dissolveStart) / dissolveRange;
+          }
+        }
+        dissolveProgress = Math.max(0, Math.min(1, dissolveProgress));
+
+        const bgR = Math.round(194 + (255 - 194) * dissolveProgress);
+        const bgG = Math.round(146 + (255 - 146) * dissolveProgress);
+        const bgB = Math.round(100 + (255 - 100) * dissolveProgress);
+        const heroSticky = document.querySelector('.hero-sticky');
+        if (heroSticky) {
+          heroSticky.style.backgroundColor = `rgb(${bgR}, ${bgG}, ${bgB})`;
+        }
+
         if (img && img.complete && img.naturalWidth > 0) {
-          renderFrame(img, frameIndex);
+          renderFrame(img, frameIndex, dissolveProgress);
         }
       }
 
@@ -270,7 +573,7 @@
           await loadFrame(0);
           isReady = true;
           loader.classList.add("hidden");
-          renderFrame(frameCache.get(0), 0);
+          renderFrame(frameCache.get(0), 0, 0);
         } catch (e) {
           ctx.fillStyle = "#c29264";
           ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -308,6 +611,366 @@
         if (rafId) cancelAnimationFrame(rafId);
         if (loadTimeout) clearTimeout(loadTimeout);
       });
+    })();
+  </script>
+
+  <script>
+    (function() {
+      const nav = document.querySelector('.site-nav');
+      const heroContainer = document.getElementById('hero-container');
+      const revealTitles = document.querySelectorAll('.reveal-title');
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function updateNav() {
+        if (!heroContainer || !nav) return;
+        const heroBottom = heroContainer.offsetTop + heroContainer.offsetHeight;
+        const scrollY = window.scrollY;
+        if (scrollY > heroBottom - 80) {
+          nav.classList.add('nav-light');
+        } else {
+          nav.classList.remove('nav-light');
+        }
+      }
+
+      function setupRevealObserver() {
+        if (!revealTitles.length) return;
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.2, rootMargin: '0px 0px -40px 0px' }
+        );
+        revealTitles.forEach((el) => observer.observe(el));
+      }
+
+      if (!prefersReducedMotion) {
+        setupRevealObserver();
+      } else {
+        revealTitles.forEach((el) => el.classList.add('visible'));
+      }
+
+      window.addEventListener('scroll', updateNav, { passive: true });
+      updateNav();
+    })();
+  </script>
+
+  <script>
+    (function() {
+      const canvas = document.getElementById('compass-canvas');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      let currentAngle = 0;
+      let velocity = 0;
+      let targetAngle = 0;
+      let mouseX = 0;
+      let mouseY = 0;
+      let isMouseOnScreen = false;
+      let rafId = 0;
+
+      function resize() {
+        const parent = canvas.parentElement;
+        if (!parent) return;
+        const size = Math.min(parent.clientWidth, 360);
+        const dpr = Math.min(window.devicePixelRatio, 2);
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        canvas.style.width = `${size}px`;
+        canvas.style.height = `${size}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+            function drawCompass(angle) {
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const r = Math.min(cx, cy) - 14;
+
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+        ctx.shadowBlur = 20;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 5;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r + 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#000000';
+        ctx.fill();
+        ctx.restore();
+
+        const bezelGrad = ctx.createLinearGradient(cx, cy - r, cx, cy + r);
+        bezelGrad.addColorStop(0, '#d4b872');
+        bezelGrad.addColorStop(0.1, '#c4a050');
+        bezelGrad.addColorStop(0.25, '#b8944c');
+        bezelGrad.addColorStop(0.45, '#8a6d3b');
+        bezelGrad.addColorStop(0.55, '#c29264');
+        bezelGrad.addColorStop(0.75, '#7a5c2e');
+        bezelGrad.addColorStop(0.9, '#6a5028');
+        bezelGrad.addColorStop(1, '#5a4525');
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r + 3, 0, Math.PI * 2);
+        ctx.fillStyle = bezelGrad;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r + 3, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        const innerBezelGrad = ctx.createLinearGradient(cx, cy - r, cx, cy + r);
+        innerBezelGrad.addColorStop(0, '#e6d5b0');
+        innerBezelGrad.addColorStop(0.25, '#d4c098');
+        innerBezelGrad.addColorStop(0.5, '#b8944c');
+        innerBezelGrad.addColorStop(0.75, '#8a6d3b');
+        innerBezelGrad.addColorStop(1, '#4a3a20');
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r - 2, 0, Math.PI * 2);
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = innerBezelGrad;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r - 5, 0, Math.PI * 2);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.stroke();
+
+        const faceGrad = ctx.createRadialGradient(cx, cy - r * 0.3, r * 0.05, cx, cy, r);
+        faceGrad.addColorStop(0, '#ffffff');
+        faceGrad.addColorStop(0.6, '#f7f5f2');
+        faceGrad.addColorStop(0.85, '#ece5d8');
+        faceGrad.addColorStop(1, '#ddd5c5');
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r - 8, 0, Math.PI * 2);
+        ctx.fillStyle = faceGrad;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r - 8, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        const outerTickStart = r - 12;
+        const midTickStart = r - 16;
+        const innerTickStart = r - 20;
+        const labelRadius = r - 28;
+
+        for (let i = 0; i < 360; i++) {
+          const a = (i / 360) * Math.PI * 2 - Math.PI / 2;
+          let inner, lineWidth, color;
+
+          if (i % 90 === 0) {
+            inner = innerTickStart;
+            lineWidth = 2;
+            color = '#0a0a0a';
+          } else if (i % 30 === 0) {
+            inner = midTickStart;
+            lineWidth = 1.3;
+            color = '#3a3a3a';
+          } else if (i % 10 === 0) {
+            inner = innerTickStart + 4;
+            lineWidth = 0.8;
+            color = '#9a9a9a';
+          } else {
+            continue;
+          }
+
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(a) * inner, cy + Math.sin(a) * inner);
+          ctx.lineTo(cx + Math.cos(a) * outerTickStart, cy + Math.sin(a) * outerTickStart);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = lineWidth;
+          ctx.stroke();
+        }
+
+        const degreeLabels = [
+          { text: '0°', a: -Math.PI / 2 },
+          { text: '30°', a: (-Math.PI / 2) + (30 / 180) * Math.PI },
+          { text: '60°', a: (-Math.PI / 2) + (60 / 180) * Math.PI },
+          { text: '90°', a: 0 },
+          { text: '120°', a: (30 / 180) * Math.PI },
+          { text: '150°', a: (60 / 180) * Math.PI },
+          { text: '180°', a: Math.PI / 2 },
+          { text: '210°', a: Math.PI / 2 + (30 / 180) * Math.PI },
+          { text: '240°', a: Math.PI / 2 + (60 / 180) * Math.PI },
+          { text: '270°', a: Math.PI },
+          { text: '300°', a: Math.PI + (30 / 180) * Math.PI },
+          { text: '330°', a: Math.PI + (60 / 180) * Math.PI }
+        ];
+
+        degreeLabels.forEach(label => {
+          const lx = cx + Math.cos(label.a) * labelRadius;
+          const ly = cy + Math.sin(label.a) * labelRadius;
+          ctx.fillStyle = '#3a3a3a';
+          ctx.font = '500 9px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(label.text, lx, ly);
+        });
+
+        const cardinals = [
+          { text: 'N', a: -Math.PI / 2 },
+          { text: 'E', a: 0 },
+          { text: 'S', a: Math.PI / 2 },
+          { text: 'W', a: Math.PI }
+        ];
+
+        cardinals.forEach(label => {
+          const lx = cx + Math.cos(label.a) * (r - 42);
+          const ly = cy + Math.sin(label.a) * (r - 42);
+          ctx.fillStyle = '#0a0a0a';
+          ctx.font = '800 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(label.text, lx, ly);
+        });
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle + Math.PI / 2);
+
+        const needleLength = r - 36;
+        const baseWidth = 5.5;
+        const headLength = needleLength * 0.42;
+
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(0, -needleLength);
+        ctx.lineTo(baseWidth, -headLength);
+        ctx.lineTo(baseWidth * 0.45, needleLength * 0.65);
+        ctx.lineTo(0, needleLength * 0.75);
+        ctx.lineTo(-baseWidth * 0.45, needleLength * 0.65);
+        ctx.lineTo(-baseWidth, -headLength);
+        ctx.closePath();
+
+        const grad = ctx.createLinearGradient(0, -needleLength, 0, needleLength);
+        grad.addColorStop(0, '#8a1a1a');
+        grad.addColorStop(0.35, '#b83232');
+        grad.addColorStop(0.7, '#4a1a1a');
+        grad.addColorStop(1, '#2a2a2a');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+
+        ctx.beginPath();
+        ctx.moveTo(0, -needleLength);
+        ctx.lineTo(baseWidth * 0.55, -needleLength + 6);
+        ctx.lineTo(0, -needleLength + 10);
+        ctx.lineTo(-baseWidth * 0.55, -needleLength + 6);
+        ctx.closePath();
+        ctx.fillStyle = '#c29264';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(0, 0, 6.5, 0, Math.PI * 2);
+        const pivotGrad = ctx.createRadialGradient(0, -1.5, 0.5, 0, 0, 6.5);
+        pivotGrad.addColorStop(0, '#d4b872');
+        pivotGrad.addColorStop(0.5, '#c29264');
+        pivotGrad.addColorStop(1, '#7a5c2e');
+        ctx.fillStyle = pivotGrad;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(0, 0, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fill();
+
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle + Math.PI / 2);
+
+        const glowAngle = -Math.PI / 2;
+        const glowWidth = 0.45;
+
+        ctx.beginPath();
+        ctx.arc(0, 0, r + 3, glowAngle - glowWidth, glowAngle + glowWidth);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = 'rgba(212, 184, 114, 0.9)';
+        ctx.shadowBlur = 14;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(0, 0, r + 3, glowAngle - glowWidth * 2.2, glowAngle + glowWidth * 2.2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.lineWidth = 8;
+        ctx.shadowBlur = 0;
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      function getAngle() {
+        const rect = canvas.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        return Math.atan2(mouseY - cy, mouseX - cx);
+      }
+
+      function animate() {
+        if (!prefersReducedMotion && isMouseOnScreen) {
+          let target = getAngle();
+          let delta = target - currentAngle;
+          while (delta > Math.PI) delta -= Math.PI * 2;
+          while (delta < -Math.PI) delta += Math.PI * 2;
+          velocity += delta * 0.06;
+          velocity *= 0.78;
+          currentAngle += velocity;
+        } else if (!prefersReducedMotion) {
+          velocity *= 0.88;
+          currentAngle += velocity;
+        }
+
+        drawCompass(currentAngle);
+        rafId = requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', resize);
+
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        isMouseOnScreen = true;
+      });
+
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+          mouseX = e.touches[0].clientX;
+          mouseY = e.touches[0].clientY;
+          isMouseOnScreen = true;
+        }
+      }, { passive: true });
+
+      window.addEventListener('mouseleave', () => {
+        isMouseOnScreen = false;
+      });
+
+      resize();
+      animate();
     })();
   </script>
 </body>
