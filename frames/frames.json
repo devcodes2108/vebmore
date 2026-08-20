@@ -1,0 +1,27 @@
+{
+  "totalFrames": 240,
+  "width": 1280,
+  "height": 720,
+  "format": "webp",
+  "originalFrameDirectory": "vebmore-frames/",
+  "gradedFrameDirectory": "vebmore-frames-graded/",
+  "grade": {
+    "description": "Subtle consistent cinematic grade applied via a single fixed 256-entry LUT identical across all frames (no per-frame auto-exposure, zero flicker).",
+    "brightnessAdjustment": "-6%",
+    "highlightAdjustment": "-10% (soft-knee compression above 75% luminance)",
+    "contrastAdjustment": "+10% around midpoint",
+    "shadowAdjustment": "-5% (smooth blend below 28% luminance, no crush)",
+    "exemptedFrames": "frame_0238.webp, frame_0239.webp, frame_0240.webp (solid near-white ending hold, std<1.5 \u2014 preserved pixel-identical to source, saved lossless)"
+  },
+  "webp": {
+    "codec": "libwebp",
+    "quality": 95,
+    "method": 6,
+    "lossless": "false, except exempted hold frames (lossless=true)"
+  },
+  "filenamePattern": "frame_%04d.webp",
+  "totalOutputSizeBytes": 21991496,
+  "averageFrameSizeBytes": 91631,
+  "largestFrameSizeBytes": 114692,
+  "smallestFrameSizeBytes": 13234
+}

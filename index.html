@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VEBMORE — Hero</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: auto;
+    }
+
+    body {
+      background: #c29264;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    .hero-scroll-container {
+      position: relative;
+      height: 400vh;
+    }
+
+    .hero-sticky {
+      position: sticky;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100vh;
+      background: #c29264;
+      overflow: hidden;
+    }
+
+    #hero-canvas {
+      display: block;
+      transform: translateY(-4vh);
+    }
+
+    .hero-loader {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .hero-loader span {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .hero-loader.hidden {
+      display: none;
+    }
+
+    .post-hero {
+      position: relative;
+      z-index: 10;
+      background: #c29264;
+      color: #ffffff;
+      padding: 2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-scroll-container" id="hero-container">
+    <div class="hero-sticky">
+      <canvas id="hero-canvas" aria-label="VEBMORE cinematic scroll animation" role="img"></canvas>
+      <div class="hero-loader" id="hero-loader">
+        <span>VEBMORE</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-hero">
+    <p style="opacity: 0.6; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;">Scroll back up to replay</p>
+  </div>
+
+  <script>
+    (function() {
+      const FRAME_PATH = "./frames/";
+      const FRAME_PREFIX = "frame_";
+      const FRAME_EXTENSION = ".webp";
+      const FRAME_WIDTH = 1280;
+      const FRAME_HEIGHT = 720;
+      const ASPECT_RATIO = FRAME_WIDTH / FRAME_HEIGHT;
+      const BATCH_SIZE = 8;
+      const BATCH_DELAY = 50;
+      const VIEWPORT_MAX_RATIO = 0.75;
+      const CORNER_RADIUS = 24;
+      const LOGO_PATH = "./ChatGPT Image Aug 20, 2026, 07_51_40 PM.png";
+      const LOGO_WIDTH = 150;
+      const LOGO_PADDING_RIGHT = 55;
+      const LOGO_PADDING_BOTTOM = 85;
+      const DISSOLVE_FRAMES = 25;
+
+      const container = document.getElementById("hero-container");
+      const canvas = document.getElementById("hero-canvas");
+      const loader = document.getElementById("hero-loader");
+      const ctx = canvas.getContext("2d");
+
+      const frameCache = new Map();
+      const frameCount = 240;
+      let isReady = false;
+      let rafId = 0;
+      let loadTimeout = 0;
+      let logoImg = null;
+      let logoLoaded = false;
+
+      function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+      }
+
+      function setCanvasSize() {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        let displayHeight = viewportHeight * VIEWPORT_MAX_RATIO;
+        let displayWidth = displayHeight * ASPECT_RATIO;
+
+        if (displayWidth > viewportWidth * VIEWPORT_MAX_RATIO) {
+          displayWidth = viewportWidth * VIEWPORT_MAX_RATIO;
+          displayHeight = displayWidth / ASPECT_RATIO;
+        }
+
+        canvas.width = FRAME_WIDTH;
+        canvas.height = FRAME_HEIGHT;
+        canvas.style.width = `${displayWidth}px`;
+        canvas.style.height = `${displayHeight}px`;
+      }
+
+      function renderFrame(img, frameIndex) {
+        if (!img || !img.complete || img.naturalWidth === 0) return;
+
+        const dissolveStart = frameCount - DISSOLVE_FRAMES;
+        let dissolveProgress = 0;
+        if (frameIndex >= dissolveStart) {
+          dissolveProgress = (frameIndex - dissolveStart) / DISSOLVE_FRAMES;
+        }
+        dissolveProgress = Math.max(0, Math.min(1, dissolveProgress));
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#c29264";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.globalAlpha = 1 - dissolveProgress;
+
+        roundRect(ctx, 0, 0, canvas.width, canvas.height, CORNER_RADIUS);
+        ctx.clip();
+
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        if (logoLoaded && logoImg) {
+          const logoHeight = (logoImg.naturalHeight / logoImg.naturalWidth) * LOGO_WIDTH;
+          const logoX = FRAME_WIDTH - LOGO_WIDTH - LOGO_PADDING_RIGHT;
+          const logoY = FRAME_HEIGHT - logoHeight - LOGO_PADDING_BOTTOM;
+          ctx.drawImage(logoImg, logoX, logoY, LOGO_WIDTH, logoHeight);
+        }
+
+        ctx.globalAlpha = 1;
+      }
+
+      function getFrameIndexFromScroll() {
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const containerTop = container.offsetTop;
+        const containerHeight = container.offsetHeight;
+        const viewportHeight = window.innerHeight;
+
+        const scrollableDistance = containerHeight - viewportHeight;
+        if (scrollableDistance <= 0) return 0;
+
+        let progress = (scrollTop - containerTop) / scrollableDistance;
+        progress = Math.max(0, Math.min(1, progress));
+
+        return Math.min(
+          Math.floor(progress * (frameCount - 1)),
+          frameCount - 1
+        );
+      }
+
+      function renderFromScroll() {
+        const frameIndex = getFrameIndexFromScroll();
+
+        let img = frameCache.get(frameIndex);
+        if (!img || !img.complete || img.naturalWidth === 0) {
+          let closest = -1;
+          let minDist = Infinity;
+          for (const [idx, cachedImg] of frameCache) {
+            if (!cachedImg.complete || cachedImg.naturalWidth === 0) continue;
+            const dist = Math.abs(idx - frameIndex);
+            if (dist < minDist) {
+              minDist = dist;
+              closest = idx;
+            }
+          }
+          if (closest >= 0) {
+            img = frameCache.get(closest);
+          }
+        }
+
+        if (img && img.complete && img.naturalWidth > 0) {
+          renderFrame(img, frameIndex);
+        }
+      }
+
+      function onScroll() {
+        if (rafId) return;
+        rafId = requestAnimationFrame(() => {
+          rafId = 0;
+          renderFromScroll();
+        });
+      }
+
+      function loadFrame(index) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => {
+            frameCache.set(index, img);
+            resolve(img);
+          };
+          img.onerror = () => {
+            reject(new Error(`Failed to load frame ${index}`));
+          };
+          img.src = `${FRAME_PATH}${FRAME_PREFIX}${String(index + 1).padStart(4, "0")}${FRAME_EXTENSION}`;
+        });
+      }
+
+      async function init() {
+        setCanvasSize();
+
+        logoImg = new Image();
+        logoLoaded = false;
+        logoImg.onload = () => {
+          logoLoaded = true;
+          if (isReady) {
+            renderFromScroll();
+          }
+        };
+        logoImg.onerror = () => {
+          logoLoaded = false;
+        };
+        logoImg.src = LOGO_PATH;
+
+        try {
+          await loadFrame(0);
+          isReady = true;
+          loader.classList.add("hidden");
+          renderFrame(frameCache.get(0), 0);
+        } catch (e) {
+          ctx.fillStyle = "#c29264";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          isReady = true;
+          loader.classList.add("hidden");
+        }
+
+        let index = 1;
+        const loadBatch = () => {
+          const end = Math.min(index + BATCH_SIZE, frameCount);
+          for (let i = index; i < end; i++) {
+            const img = new Image();
+            img.onload = () => {
+              frameCache.set(i, img);
+            };
+            img.src = `${FRAME_PATH}${FRAME_PREFIX}${String(i + 1).padStart(4, "0")}${FRAME_EXTENSION}`;
+          }
+          index = end;
+          if (index < frameCount) {
+            loadTimeout = window.setTimeout(loadBatch, BATCH_DELAY);
+          }
+        };
+        loadBatch();
+      }
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", () => {
+        setCanvasSize();
+        renderFromScroll();
+      });
+
+      init();
+
+      window.addEventListener("beforeunload", () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        if (loadTimeout) clearTimeout(loadTimeout);
+      });
+    })();
+  </script>
+</body>
+</html>

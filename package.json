@@ -1,0 +1,9 @@
+{
+  "name": "vebmore",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "python -m http.server 3001",
+    "build": "echo 'static site'"
+  }
+}
