@@ -26,3 +26,18 @@ out/
 # Logs
 *.log
 npm-debug.log*
+
+# Cloudflare
+.wrangler/
+.dev.vars
+
+# Cache
+.cache/
+.parcel-cache/
+
+# OS generated files
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+*.lnk
