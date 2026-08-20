@@ -43,7 +43,7 @@
 
     #hero-canvas {
       display: block;
-      transform: translateY(-4vh);
+      transform: translateY(-5.5vh);
     }
 
     .hero-loader {
@@ -156,7 +156,10 @@
         const dissolveStart = frameCount - DISSOLVE_FRAMES;
         let dissolveProgress = 0;
         if (frameIndex >= dissolveStart) {
-          dissolveProgress = (frameIndex - dissolveStart) / DISSOLVE_FRAMES;
+          const dissolveRange = frameCount - 1 - dissolveStart;
+          if (dissolveRange > 0) {
+            dissolveProgress = (frameIndex - dissolveStart) / dissolveRange;
+          }
         }
         dissolveProgress = Math.max(0, Math.min(1, dissolveProgress));
 
