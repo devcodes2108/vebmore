@@ -528,22 +528,48 @@
       const gridMaterial = new THREE.LineBasicMaterial({ color: 0x4a4a4a, transparent: true, opacity: 0.3 });
       const gridGroup = new THREE.Group();
       const gridSize = 2.1;
-      const gridHalf = gridSize / 2;
+      state.gridHalf = gridSize / 2;
       const gridStep = gridSize / 3;
       const points = [];
       for (let i = 1; i < 3; i++) {
-        const x = -gridHalf + i * gridStep;
-        points.push(new THREE.Vector3(x, -gridHalf, 0), new THREE.Vector3(x, gridHalf, 0));
+        const x = -state.gridHalf + i * gridStep;
+        points.push(new THREE.Vector3(x, -state.gridHalf, 0), new THREE.Vector3(x, state.gridHalf, 0));
       }
       for (let i = 1; i < 3; i++) {
-        const y = -gridHalf + i * gridStep;
-        points.push(new THREE.Vector3(-gridHalf, y, 0), new THREE.Vector3(gridHalf, y, 0));
+        const y = -state.gridHalf + i * gridStep;
+        points.push(new THREE.Vector3(-state.gridHalf, y, 0), new THREE.Vector3(state.gridHalf, y, 0));
       }
       const gridGeom = new THREE.BufferGeometry().setFromPoints(points);
       const gridLines = new THREE.LineSegments(gridGeom, gridMaterial);
       gridGroup.add(gridLines);
-      gridGroup.position.y = -0.15;
+      gridGroup.position.y = -0.05;
       scene.add(gridGroup);
+
+      const rhombusCount = 12;
+      const rhombusGroup = new THREE.Group();
+      const rhombusMaterial = new THREE.MeshBasicMaterial({ color: 0x8a8a8a, transparent: true, opacity: 0.18, side: THREE.DoubleSide, depthWrite: false });
+      const rhombusGeom = new THREE.PlaneGeometry(0.08, 0.08);
+      const rhombusData = [];
+      for (let i = 0; i < rhombusCount; i++) {
+        const mesh = new THREE.Mesh(rhombusGeom, rhombusMaterial);
+        mesh.rotation.z = Math.PI / 4;
+        mesh.position.set(
+          (Math.random() - 0.5) * gridSize,
+          (Math.random() - 0.5) * gridSize,
+          0.01
+        );
+        mesh.scale.setScalar(0.6 + Math.random() * 0.8);
+        rhombusGroup.add(mesh);
+        rhombusData.push({
+          mesh,
+          vx: (Math.random() - 0.5) * 0.15,
+          vy: (Math.random() - 0.5) * 0.12,
+          phase: Math.random() * Math.PI * 2,
+          baseOpacity: 0.08 + Math.random() * 0.1
+        });
+      }
+      state.rhombusData = rhombusData;
+      scene.add(rhombusGroup);
 
       const smokeCanvas = document.createElement('canvas');
       smokeCanvas.width = 256;
@@ -586,7 +612,9 @@
         tmpEuler: new THREE.Euler(),
         floatPhase: Math.random() * Math.PI * 2,
         armBones: [],
-        armBaseQuats: []
+        armBaseQuats: [],
+        rhombusData: [],
+        gridHalf: 0
       };
 
       loader.load(
@@ -730,6 +758,25 @@
               state.tmpEuler.set(rx, ry, rz, 'YXZ');
               state.tmpQuat.setFromEuler(state.tmpEuler);
               bone.quaternion.copy(base).multiply(state.tmpQuat);
+            });
+          }
+
+          if (state.rhombusData.length > 0) {
+            state.rhombusData.forEach((data) => {
+              const mesh = data.mesh;
+              const drift = Math.sin(t * 0.4 + data.phase) * 0.08;
+              const driftY = Math.cos(t * 0.35 + data.phase + 1) * 0.06;
+              mesh.position.x += data.vx * 0.3;
+              mesh.position.y += data.vy * 0.3;
+              mesh.position.x += drift * 0.15;
+              mesh.position.y += driftY * 0.15;
+              const half = state.gridHalf * 0.95;
+              if (mesh.position.x > half) mesh.position.x = -half;
+              if (mesh.position.x < -half) mesh.position.x = half;
+              if (mesh.position.y > half) mesh.position.y = -half;
+              if (mesh.position.y < -half) mesh.position.y = half;
+              const opacity = data.baseOpacity + Math.sin(t * 0.6 + data.phase) * 0.04;
+              mesh.material.opacity = Math.max(0.02, Math.min(0.22, opacity));
             });
           }
         }
