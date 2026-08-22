@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VEBMORE — Hero</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: auto; }
@@ -21,10 +24,35 @@
 
     .hero-sticky {
       position: sticky; top: 0; display: flex; align-items: center; justify-content: center;
-      width: 100%; height: 100vh; background: #c29264; overflow: hidden;
+      width: 100%; height: 100vh; overflow: hidden;
     }
 
-    #hero-canvas { display: block; transform: translateY(-5.5vh); }
+    .hero-frame-wrap {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      transform: translateY(-5.5vh);
+      z-index: 2;
+    }
+
+    #hero-canvas { display: block; position: relative; z-index: 2; }
+
+    #hero-bg-img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; filter: blur(40px) brightness(1.1);
+      z-index: 1; pointer-events: none; transform: scale(1.15);
+    }
+
+    #hero-tint {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(194, 146, 100, 0.18) 0%, rgba(30, 20, 15, 0.35) 100%);
+      z-index: 1; pointer-events: none;
+    }
+
+    #hero-bg-black {
+      position: absolute; inset: 0; background: #000000;
+      opacity: 1; pointer-events: none; z-index: 0;
+    }
 
     .hero-loader {
       position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
@@ -37,6 +65,27 @@
     }
 
     .hero-loader.hidden { display: none; }
+
+    .hero-scroll-indicator {
+      position: absolute; left: 1.5rem; bottom: 2.5rem; z-index: 10;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem;
+      pointer-events: none; font-family: 'Orbitron', sans-serif; color: #ffffff;
+      font-size: 0.85rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
+    .hero-scroll-line {
+      white-space: nowrap; line-height: 1.3;
+    }
+
+    .hero-scroll-cursor {
+      display: inline-block;
+      animation: cursorBlink 1s step-end infinite;
+    }
+
+    @keyframes cursorBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
 
     /* ========== NAVBAR ========== */
     .site-nav {
@@ -63,51 +112,33 @@
 
     .site-nav.nav-light .nav-logo, .site-nav.nav-light .nav-links a { color: #0a0a0a; }
 
-    /* ========== SCROLL INDICATOR ========== */
-    .scroll-indicator {
-      position: absolute; left: 50%; bottom: 2.5rem; transform: translateX(-50%); z-index: 20;
-      display: flex; flex-direction: column; align-items: center; gap: 0.6rem; pointer-events: none;
-    }
 
-    .scroll-indicator span {
-      font-size: 0.9rem; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase;
-      color: transparent; background: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.9) 45%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.9) 55%, rgba(255,255,255,0.5) 100%);
-      background-size: 200% 100%; background-clip: text; -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent; animation: shimmer 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-    }
-
-    .scroll-arrows {
-      display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
-      animation: arrowBounce 1s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-    }
-
-    .scroll-arrows span {
-      font-size: 1.15rem; font-weight: 700; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.9);
-      line-height: 1; text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
-    }
-
-    @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
-
-    @keyframes arrowBounce {
-      0%, 100% { transform: translateY(0); opacity: 1; }
-      20% { transform: translateY(12px); opacity: 0.4; }
-      40% { transform: translateY(12px); opacity: 0.4; }
-    }
 
     /* ========== ABOUT ========== */
-    .about-section { position: relative; z-index: 10; background: #ffffff; color: #0a0a0a; padding: clamp(5rem, 10vw, 9rem) 0; }
+    .about-section { position: relative; z-index: 10; background: #000000; color: #ffffff; padding: clamp(5rem, 10vw, 9rem) 0; }
 
     .about-inner { width: min(calc(100% - 48px), 900px); margin-inline: auto; }
 
     /* ========== ABOUT / SERVICES LAYOUT ========== */
     .split-section {
-      position: relative; z-index: 10; background: #ffffff; color: #0a0a0a;
+      position: relative; z-index: 10; background: #000000; color: #ffffff;
       padding: clamp(2.5rem, 5vw, 5.5rem) 0;
+    }
+
+    .about-top-gradient {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 100px;
+      background: linear-gradient(180deg, rgba(30, 20, 15, 0.9) 0%, #000000 100%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .split-inner {
       width: min(calc(100% - 48px), 1200px); margin-inline: auto; display: grid;
       gap: 3rem; align-items: center;
+      position: relative;
+      z-index: 1;
     }
 
     @media (min-width: 768px) { .split-inner { grid-template-columns: 1fr 1fr; gap: 4rem; } }
@@ -116,34 +147,34 @@
 
     .split-label {
       display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em;
-      text-transform: uppercase; color: #6b6b6b; margin-bottom: 1.25rem;
+      text-transform: uppercase; color: rgba(255, 255, 255, 0.7); margin-bottom: 1.25rem;
     }
 
     .split-title {
       font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.4rem, 5vw, 3.4rem);
-      font-weight: 500; letter-spacing: -0.02em; line-height: 1.05; color: #0a0a0a; margin-bottom: 1.5rem;
+      font-weight: 500; letter-spacing: -0.02em; line-height: 1.05; color: #ffffff; margin-bottom: 1.5rem;
     }
 
     .split-text {
-      font-size: clamp(0.95rem, 1.4vw, 1.1rem); line-height: 1.75; color: #3a3a3a; max-width: 52ch;
+      font-size: clamp(0.95rem, 1.4vw, 1.1rem); line-height: 1.75; color: rgba(255, 255, 255, 0.85); max-width: 52ch;
     }
 
     .split-motto {
-      margin-top: 2.25rem; padding-top: 1.75rem; border-top: 1px solid rgba(0, 0, 0, 0.12);
+      margin-top: 2.25rem; padding-top: 1.75rem; border-top: 1px solid rgba(255, 255, 255, 0.12);
       font-family: Montserrat, sans-serif; font-size: clamp(1.2rem, 2vw, 1.55rem);
-      font-weight: 500; line-height: 1.55; color: #000000;
+      font-weight: 500; line-height: 1.55; color: #ffffff;
     }
 
-    .split-motto strong { font-weight: 700; color: #000000; }
-    .split-motto em { font-style: italic; color: #000000; font-weight: 500; }
+    .split-motto strong { font-weight: 700; color: #ffffff; }
+    .split-motto em { font-style: italic; color: #ffffff; font-weight: 500; }
 
-    .split-visual { position: relative; min-height: 420px; }
+    .split-visual { position: relative; min-height: 500px; overflow: visible; }
 
-    .robot-canvas { position: sticky; top: 20vh; width: 100%; height: 60vh; max-height: 420px; display: block; }
+    .robot-canvas { position: sticky; top: 20vh; width: 100%; height: 60vh; max-height: 500px; display: block; z-index: 2; }
 
     @media (max-width: 767px) {
-      .split-visual { min-height: 320px; }
-      .robot-canvas { max-height: 360px; }
+      .split-visual { min-height: 360px; }
+      .robot-canvas { max-height: 420px; }
     }
 
     /* ========== REDUCED MOTION ========== */
@@ -191,21 +222,27 @@
     <!-- ==================== HERO ==================== -->
     <div class="hero-scroll-container" id="hero-container">
       <div class="hero-sticky">
-        <canvas id="hero-canvas" aria-label="VEBMORE cinematic scroll animation" role="img"></canvas>
+        <img id="hero-bg-img" alt="" aria-hidden="true" />
+        <div id="hero-tint"></div>
+        <div id="hero-bg-black"></div>
+        <div class="hero-frame-wrap">
+          <canvas id="hero-canvas" aria-label="VEBMORE cinematic scroll animation" role="img"></canvas>
+          <div class="hero-scroll-indicator" id="hero-scroll-indicator">
+            <div class="hero-scroll-line" id="hero-scroll-line-1"></div>
+            <div class="hero-scroll-line">
+              <span id="hero-scroll-text"></span><span class="hero-scroll-cursor">|</span>
+            </div>
+          </div>
+        </div>
         <div class="hero-loader" id="hero-loader">
           <span>VEBMORE</span>
-        </div>
-        <div class="scroll-indicator" aria-hidden="true">
-          <span>Scroll to explore</span>
-          <div class="scroll-arrows">
-            <span>&#x2193;</span>
-          </div>
         </div>
       </div>
     </div>
 
     <!-- ==================== ABOUT ==================== -->
     <section class="split-section" id="about">
+      <div class="about-top-gradient"></div>
       <div class="split-inner">
         <div class="split-content reveal-stagger">
           <span class="split-label reveal-about-label">About Us</span>
@@ -295,15 +332,15 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        ctx.save();
+        roundRect(ctx, 0, 0, canvas.width, canvas.height, CORNER_RADIUS);
+        ctx.clip();
+
         const bgR = Math.round(194 + (255 - 194) * dissolveProgress);
         const bgG = Math.round(146 + (255 - 146) * dissolveProgress);
         const bgB = Math.round(100 + (255 - 100) * dissolveProgress);
         ctx.fillStyle = `rgb(${bgR}, ${bgG}, ${bgB})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.save();
-        roundRect(ctx, 0, 0, canvas.width, canvas.height, CORNER_RADIUS);
-        ctx.clip();
 
         ctx.globalAlpha = 1 - dissolveProgress;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -377,17 +414,43 @@
         }
         dissolveProgress = Math.max(0, Math.min(1, dissolveProgress));
 
-        const bgR = Math.round(194 + (255 - 194) * dissolveProgress);
-        const bgG = Math.round(146 + (255 - 146) * dissolveProgress);
-        const bgB = Math.round(100 + (255 - 100) * dissolveProgress);
-        const heroSticky = document.querySelector('.hero-sticky');
-        if (heroSticky) {
-          heroSticky.style.backgroundColor = `rgb(${bgR}, ${bgG}, ${bgB})`;
+        const fadeStart = Math.floor(frameCount * 0.8);
+        const fadeRange = frameCount - 1 - fadeStart;
+        let fadeToBlack = 0;
+        if (frameIndex >= fadeStart && fadeRange > 0) {
+          fadeToBlack = Math.min(1, (frameIndex - fadeStart) / fadeRange);
         }
 
         if (img && img.complete && img.naturalWidth > 0) {
           renderFrame(img, frameIndex, dissolveProgress);
         }
+
+        if (fadeToBlack > 0) {
+          ctx.globalAlpha = fadeToBlack;
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.globalAlpha = 1;
+        }
+
+        const bgImg = document.getElementById('hero-bg-img');
+        if (bgImg) {
+          bgImg.style.opacity = 0.35 * (1 - fadeToBlack);
+        }
+
+        const heroTint = document.getElementById('hero-tint');
+        if (heroTint) {
+          heroTint.style.opacity = 1 - fadeToBlack;
+        }
+
+        const aboutGradient = document.querySelector('.about-top-gradient');
+        if (aboutGradient) {
+          aboutGradient.style.opacity = 1 - fadeToBlack;
+        }
+
+        const bgR = Math.round(194 * (1 - fadeToBlack));
+        const bgG = Math.round(146 * (1 - fadeToBlack));
+        const bgB = Math.round(100 * (1 - fadeToBlack));
+        document.body.style.backgroundColor = `rgb(${bgR}, ${bgG}, ${bgB})`;
       }
 
       function onScroll() {
@@ -438,6 +501,13 @@
           ctx.fillRect(0, 0, canvas.width, canvas.height);
           isReady = true;
           loader.classList.add("hidden");
+        }
+
+        renderFromScroll();
+
+        const bgCanvas = document.getElementById('hero-bg-img');
+        if (bgCanvas) {
+          bgCanvas.src = `${FRAME_PATH}${FRAME_PREFIX}${String(1).padStart(4, "0")}${FRAME_EXTENSION}`;
         }
 
         let index = 1;
@@ -677,6 +747,97 @@
         setupTextReveal();
         updateReveal();
       });
+
+      const scrollIndicator = document.getElementById('hero-scroll-indicator');
+      const scrollLine1 = document.getElementById('hero-scroll-line-1');
+      const scrollText = document.getElementById('hero-scroll-text');
+      const scrollMessages = [
+        { line1: 'SCROLL TO', line2: 'EXPLORE...' },
+        { line1: 'KEEP SCROLLING...', line2: null },
+        { line1: 'ALMOST THERE...', line2: null }
+      ];
+      let currentScrollMsgIndex = -1;
+      let typewriterTimer = null;
+
+      function getHeroProgress() {
+        if (!heroContainer) return 0;
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const containerTop = heroContainer.offsetTop;
+        const containerHeight = heroContainer.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const scrollableDistance = containerHeight - viewportHeight;
+        if (scrollableDistance <= 0) return 0;
+        let progress = (scrollTop - containerTop) / scrollableDistance;
+        return Math.max(0, Math.min(1, progress));
+      }
+
+      function clearTypewriter() {
+        if (typewriterTimer) {
+          clearInterval(typewriterTimer);
+          typewriterTimer = null;
+        }
+      }
+
+      function typewriteMessage(msgIndex) {
+        clearTypewriter();
+        const msg = scrollMessages[msgIndex];
+        if (!msg || !scrollLine1 || !scrollText) return;
+
+        if (msg.line2 === null) {
+          scrollLine1.style.display = 'none';
+          scrollText.parentElement.style.justifyContent = 'center';
+          scrollLine1.textContent = '';
+        } else {
+          scrollLine1.style.display = '';
+          scrollText.parentElement.style.justifyContent = '';
+          scrollLine1.textContent = msg.line1;
+        }
+
+        const fullText = msg.line2 !== null ? msg.line2 : msg.line1;
+        scrollText.textContent = '';
+        let charIndex = 0;
+
+        typewriterTimer = setInterval(() => {
+          if (charIndex < fullText.length) {
+            charIndex++;
+            scrollText.textContent = fullText.substring(0, charIndex);
+          } else {
+            clearTypewriter();
+          }
+        }, 55);
+      }
+
+      function updateScrollIndicator() {
+        if (!scrollIndicator || !scrollLine1 || !scrollText) return;
+        const progress = getHeroProgress();
+        let activeIndex = 0;
+        if (progress >= 0.66) {
+          activeIndex = 2;
+        } else if (progress >= 0.33) {
+          activeIndex = 1;
+        }
+
+        if (activeIndex !== currentScrollMsgIndex) {
+          currentScrollMsgIndex = activeIndex;
+          typewriteMessage(activeIndex);
+        }
+
+        if (activeIndex === 2) {
+          const fadeStart = 0.85;
+          const fadeEnd = 0.95;
+          const fadeRange = fadeEnd - fadeStart;
+          let opacity = 1;
+          if (fadeRange > 0 && progress >= fadeStart) {
+            opacity = 1 - Math.min(1, (progress - fadeStart) / fadeRange);
+          }
+          scrollIndicator.style.opacity = Math.max(0, opacity);
+        } else {
+          scrollIndicator.style.opacity = 1;
+        }
+      }
+
+      updateScrollIndicator();
+      window.addEventListener('scroll', () => requestAnimationFrame(updateScrollIndicator), { passive: true });
     })();
     </script>
 
@@ -729,6 +890,7 @@
         __robotNeckBone: null,
         __robotHeadBone: null,
         __robotHeadMesh: null,
+        __robotGroup: null,
         headBaseQuat: null,
         neckBaseQuat: null,
         tmpQuat: new THREE.Quaternion(),
@@ -791,10 +953,10 @@
       smokeCanvas.height = 256;
       const sctx = smokeCanvas.getContext('2d');
       const gradient = sctx.createRadialGradient(128, 128, 0, 128, 128, 128);
-      gradient.addColorStop(0, 'rgba(180, 175, 170, 0.18)');
-      gradient.addColorStop(0.4, 'rgba(180, 175, 170, 0.08)');
-      gradient.addColorStop(0.7, 'rgba(180, 175, 170, 0.02)');
-      gradient.addColorStop(1, 'rgba(180, 175, 170, 0)');
+      gradient.addColorStop(0, 'rgba(255, 200, 100, 0.12)');
+      gradient.addColorStop(0.4, 'rgba(255, 180, 80, 0.06)');
+      gradient.addColorStop(0.7, 'rgba(255, 160, 60, 0.02)');
+      gradient.addColorStop(1, 'rgba(255, 140, 40, 0)');
       sctx.fillStyle = gradient;
       sctx.fillRect(0, 0, 256, 256);
       const smokeTexture = new THREE.CanvasTexture(smokeCanvas);
@@ -825,7 +987,10 @@
           model.position.z = -scaledBox.getCenter(new THREE.Vector3()).z;
           model.position.y = -scaledBox.min.y;
 
-          scene.add(model);
+          const robotGroup = new THREE.Group();
+          robotGroup.add(model);
+          robotGroup.position.y = -0.15;
+          scene.add(robotGroup);
 
           let armature = null;
           let neckBone = null;
@@ -856,6 +1021,7 @@
           state.__robotNeckBone = neckBone;
           state.__robotHeadBone = headBone;
           state.__robotHeadMesh = headMesh;
+          state.__robotGroup = robotGroup;
 
           if (state.__robotHeadBone) {
             state.headBaseQuat = state.__robotHeadBone.quaternion.clone();
@@ -866,6 +1032,23 @@
 
           state.armBones = armBones;
           state.armBaseQuats = armBones.map(bone => bone.quaternion.clone());
+
+          if (state.__robotModel) {
+            state.__robotModel.traverse((child) => {
+              if (child.isMesh && child.material) {
+                const materials = Array.isArray(child.material) ? child.material : [child.material];
+                materials.forEach((mat) => {
+                  if (mat.color) {
+                    const hsl = {};
+                    mat.color.getHSL(hsl);
+                    if (hsl.h > 0.1 && hsl.h < 0.2 && hsl.s > 0.3) {
+                      mat.color.setHSL(hsl.h, Math.min(1, hsl.s * 1.2), hsl.l * 0.85);
+                    }
+                  }
+                });
+              }
+            });
+          }
         },
         undefined,
         (err) => console.error('Failed to load robot:', err)
@@ -904,9 +1087,9 @@
         const t = time * 0.001;
 
         if (state.__robotModel) {
-          const armature = state.__robotArmature || state.__robotModel;
-
-          armature.position.y = Math.sin(t * 3.5 + state.floatPhase) * 0.05;
+          if (state.__robotGroup) {
+            state.__robotGroup.position.y = Math.sin(t * 3.5 + state.floatPhase) * 0.05;
+          }
 
           if (state.__robotHeadBone) {
             if (state.mouseOnScreen) {
