@@ -102,7 +102,7 @@
     /* ========== ABOUT / SERVICES LAYOUT ========== */
     .split-section {
       position: relative; z-index: 10; background: #ffffff; color: #0a0a0a;
-      padding: clamp(5rem, 10vw, 9rem) 0;
+      padding: clamp(2.5rem, 5vw, 5.5rem) 0;
     }
 
     .split-inner {
@@ -130,11 +130,12 @@
 
     .split-motto {
       margin-top: 2.25rem; padding-top: 1.75rem; border-top: 1px solid rgba(0, 0, 0, 0.12);
-      font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.55rem);
-      font-weight: 500; line-height: 1.55; color: #0a0a0a; font-style: italic;
+      font-family: Montserrat, sans-serif; font-size: clamp(1.2rem, 2vw, 1.55rem);
+      font-weight: 500; line-height: 1.55; color: #000000;
     }
 
-    .split-motto em { font-style: normal; font-weight: 600; color: #7a5c2e; }
+    .split-motto strong { font-weight: 700; color: #000000; }
+    .split-motto em { font-style: italic; color: #000000; font-weight: 500; }
 
     .split-visual { position: relative; min-height: 420px; }
 
@@ -149,6 +150,32 @@
     @media (prefers-reduced-motion: reduce) {
       .scroll-indicator span { animation: none; color: rgba(255, 255, 255, 0.7); background: none; -webkit-text-fill-color: rgba(255, 255, 255, 0.7); }
       .scroll-arrows { animation: none; opacity: 0.7; }
+      .reveal-word, .reveal-line, .reveal-motto-line, .reveal-about-label { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* ========== ABOUT TEXT REVEAL ========== */
+    .split-title .reveal-word,
+    .split-text .reveal-word {
+      display: inline-block;
+      vertical-align: baseline;
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, opacity;
+    }
+    .split-text .reveal-line {
+      display: inline-block;
+      width: 100%;
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, opacity;
+    }
+    .reveal-motto-line {
+      display: block;
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, opacity;
+    }
+    .reveal-about-label {
+      display: inline-block;
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, opacity;
     }
   </style>
 </head>
@@ -181,18 +208,20 @@
     <section class="split-section" id="about">
       <div class="split-inner">
         <div class="split-content reveal-stagger">
-          <span class="split-label">About Vebmore</span>
-          <h2 class="split-title">A creative digital studio for the modern web.</h2>
+          <span class="split-label reveal-about-label">About Us</span>
+          <h2 class="split-title">
+            <span class="reveal-word">A</span> <span class="reveal-word">creative</span> <span class="reveal-word">digital</span> <span class="reveal-word">studio</span> <span class="reveal-word">for</span> <span class="reveal-word">the</span> <span class="reveal-word">modern</span> <span class="reveal-word">web.</span>
+          </h2>
           <p class="split-text">
             Vebmore is a focused digital agency building premium websites with quiet confidence.
             We combine design sensibility with clean engineering to produce work that feels considered,
             intentional, and enduring.
           </p>
           <blockquote class="split-motto">
-            <em>You Dream,</em><br />
-            We <em>Design,</em><br />
-            We <em>Develop,</em><br />
-            We <em>Deliver.</em>
+            <span class="reveal-motto-line"><strong>You</strong> <em>Dream,</em></span>
+            <span class="reveal-motto-line"><strong>We</strong> <em>Design,</em></span>
+            <span class="reveal-motto-line"><strong>We</strong> <em>Develop,</em></span>
+            <span class="reveal-motto-line"><strong>We</strong> <em>Deliver.</em></span>
           </blockquote>
         </div>
         <div class="split-visual">
@@ -486,6 +515,168 @@
 
       window.addEventListener('scroll', updateNav, { passive: true });
       updateNav();
+
+      const aboutSection = document.getElementById('about');
+      const splitTitle = document.querySelector('.split-title');
+      const splitText = document.querySelector('.split-text');
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function setupTitleReveal() {
+        if (!splitTitle) return;
+        const text = splitTitle.textContent.trim();
+        const words = text.split(/\s+/);
+        splitTitle.innerHTML = '';
+        words.forEach((word, i) => {
+          const span = document.createElement('span');
+          span.className = 'reveal-word';
+          span.textContent = word;
+          splitTitle.appendChild(span);
+          if (i < words.length - 1) {
+            splitTitle.appendChild(document.createTextNode(' '));
+          }
+        });
+      }
+
+      function setupTextReveal() {
+        if (!splitText) return;
+        const text = splitText.textContent.trim();
+        const words = text.split(/\s+/);
+        splitText.innerHTML = '';
+        const tempSpans = [];
+        words.forEach((word, i) => {
+          const span = document.createElement('span');
+          span.textContent = word;
+          span.style.visibility = 'hidden';
+          splitText.appendChild(span);
+          tempSpans.push(span);
+          if (i < words.length - 1) {
+            splitText.appendChild(document.createTextNode(' '));
+          }
+        });
+        splitText.offsetHeight;
+        const lines = [];
+        let currentLine = [];
+        let lastTop = null;
+        tempSpans.forEach((span) => {
+          const top = span.offsetTop;
+          if (lastTop !== null && Math.abs(top - lastTop) > 2) {
+            lines.push(currentLine);
+            currentLine = [];
+          }
+          currentLine.push(span.textContent);
+          lastTop = top;
+        });
+        if (currentLine.length > 0) lines.push(currentLine);
+        splitText.innerHTML = '';
+        lines.forEach((lineWords) => {
+          const lineSpan = document.createElement('span');
+          lineSpan.className = 'reveal-line';
+          lineSpan.textContent = lineWords.join(' ');
+          splitText.appendChild(lineSpan);
+        });
+      }
+
+      function getAboutProgress() {
+        if (!aboutSection) return 0;
+        const rect = aboutSection.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const triggerStart = windowHeight * 0.70;
+        const triggerEnd = windowHeight * 0.10;
+        const triggerRange = triggerStart - triggerEnd;
+        let progress = (triggerStart - rect.top) / triggerRange;
+        return Math.max(0, Math.min(1, progress));
+      }
+
+      function updateReveal() {
+        const progress = getAboutProgress();
+        const aboutLabel = document.querySelector('.reveal-about-label');
+        const titleWords = document.querySelectorAll('.split-title .reveal-word');
+        const textLines = document.querySelectorAll('.split-text .reveal-line');
+        const mottoLines = document.querySelectorAll('.split-motto .reveal-motto-line');
+
+        if (aboutLabel) {
+          const raw = Math.max(0, Math.min(1, progress / 0.10));
+          const p = easeOutCubic(raw);
+          const scale = 0.85 + p * 0.15;
+          aboutLabel.style.transform = 'scale(' + scale + ')';
+          aboutLabel.style.opacity = p;
+        }
+
+        const titleCount = titleWords.length;
+        const titleSlot = 0.03;
+        const titleAnim = 0.025;
+        const titleStart = 0.12;
+        titleWords.forEach((word, i) => {
+          const start = titleStart + i * titleSlot;
+          const end = start + titleAnim;
+          const raw = Math.max(0, Math.min(1, (progress - start) / (end - start)));
+          const p = easeOutCubic(raw);
+          word.style.transform = 'translateY(' + ((1 - p) * 20) + 'px)';
+          word.style.opacity = p;
+        });
+
+        const textCount = textLines.length;
+        const textGroupStart = 0.38;
+        const textSlot = 0.14;
+        const textAnim = 0.11;
+        textLines.forEach((line, i) => {
+          const start = textGroupStart + i * textSlot;
+          const end = start + textAnim;
+          const raw = Math.max(0, Math.min(1, (progress - start) / (end - start)));
+          const p = easeOutCubic(raw);
+          line.style.transform = 'translateY(' + ((1 - p) * 15) + 'px)';
+          line.style.opacity = p;
+        });
+
+        const mottoCount = mottoLines.length;
+        const mottoGroupStart = 0.85;
+        const mottoSlot = 0.04;
+        const mottoAnim = 0.035;
+        mottoLines.forEach((line, i) => {
+          const start = mottoGroupStart + i * mottoSlot;
+          const end = start + mottoAnim;
+          const raw = Math.max(0, Math.min(1, (progress - start) / (end - start)));
+          const p = easeOutCubic(raw);
+          line.style.transform = 'translateX(' + ((1 - p) * 40) + 'px)';
+          line.style.opacity = p;
+        });
+      }
+
+      function setupAboutLabelReveal() {
+        const label = document.querySelector('.reveal-about-label');
+        if (!label) return;
+        label.style.transform = 'scale(0.85)';
+        label.style.opacity = '0';
+      }
+
+      function setupMottoReveal() {
+        const motto = document.querySelector('.split-motto');
+        if (!motto) return;
+        const lines = motto.querySelectorAll('.reveal-motto-line');
+        lines.forEach((line) => {
+          line.style.transform = 'translateX(-40px)';
+          line.style.opacity = '0';
+        });
+      }
+
+      setupAboutLabelReveal();
+      setupTitleReveal();
+      setupMottoReveal();
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setupTextReveal();
+          updateReveal();
+        });
+      });
+
+      window.addEventListener('scroll', () => requestAnimationFrame(updateReveal), { passive: true });
+      window.addEventListener('resize', () => {
+        setupTextReveal();
+        updateReveal();
+      });
     })();
     </script>
 
@@ -551,7 +742,7 @@
 
       const gridMaterial = new THREE.LineBasicMaterial({ color: 0x4a4a4a, transparent: true, opacity: 0.3 });
       const gridGroup = new THREE.Group();
-      const gridSize = 2.1;
+      const gridSize = 1.85;
       state.gridHalf = gridSize / 2;
       const gridStep = gridSize / 3;
       const points = [];
