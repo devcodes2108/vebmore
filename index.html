@@ -6,7 +6,7 @@
   <title>VEBMORE — Hero</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: auto; }
@@ -25,6 +25,18 @@
     .hero-sticky {
       position: sticky; top: 0; display: flex; align-items: center; justify-content: center;
       width: 100%; height: 100vh; overflow: hidden;
+    }
+
+    .about-scroll-container {
+      position: relative;
+      height: 300vh;
+    }
+
+    .about-scroll-container .split-section {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
     }
 
     .hero-frame-wrap {
@@ -121,7 +133,7 @@
 
     /* ========== ABOUT / SERVICES LAYOUT ========== */
     .split-section {
-      position: relative; z-index: 10; background: #000000; color: #ffffff;
+      position: relative; background: #000000; color: #ffffff;
       padding: clamp(2.5rem, 5vw, 5.5rem) 0;
     }
 
@@ -170,7 +182,7 @@
 
     .split-visual { position: relative; min-height: 500px; overflow: visible; }
 
-    .robot-canvas { position: sticky; top: 20vh; width: 100%; height: 60vh; max-height: 500px; display: block; z-index: 2; }
+    .robot-canvas { position: sticky; top: 34vh; width: 100%; height: 60vh; max-height: 500px; display: block; z-index: 2; }
 
     @media (max-width: 767px) {
       .split-visual { min-height: 360px; }
@@ -182,6 +194,7 @@
       .scroll-indicator span { animation: none; color: rgba(255, 255, 255, 0.7); background: none; -webkit-text-fill-color: rgba(255, 255, 255, 0.7); }
       .scroll-arrows { animation: none; opacity: 0.7; }
       .reveal-word, .reveal-line, .reveal-motto-line, .reveal-about-label { opacity: 1 !important; transform: none !important; }
+      .grid-line-v, .grid-line-h { clip-path: none !important; }
     }
 
     /* ========== ABOUT TEXT REVEAL ========== */
@@ -203,11 +216,140 @@
       transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: transform, opacity;
     }
-    .reveal-about-label {
+      .reveal-about-label {
       display: inline-block;
       transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: transform, opacity;
     }
+
+    /* ========== ORANGE BLOCKS ========== */
+    .orange-scroll-container {
+      position: relative;
+      height: 500vh;
+      background: #ffffff;
+    }
+
+    .orange-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+    }
+
+    .orange-rectangle {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      width: min(65vw, 850px);
+      aspect-ratio: 5 / 3.5;
+    }
+
+    .orange-block {
+      position: relative;
+      transform: scale(0);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+      perspective: 800px;
+    }
+
+    .orange-block.visible {
+      transform: scale(1);
+    }
+
+    .orange-block-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .orange-block.flipped .orange-block-inner {
+      transform: rotateY(180deg);
+    }
+
+    .orange-block-front,
+    .orange-block-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .orange-block-front {
+      background: #c29264;
+    }
+
+    .orange-block-back {
+      background: #ffffff;
+      transform: rotateY(180deg);
+      padding: 8px;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #000000;
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      display: none;
+    }
+
+    .orange-block-back.active {
+      display: flex;
+    }
+
+    .orange-block-back img,
+    .orange-block-back video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .orange-block.reveal-down .orange-block-back {
+      transform: rotateX(180deg) rotateY(180deg);
+    }
+
+    .orange-block.reveal-up .orange-block-back {
+      transform: rotateX(-180deg) rotateY(180deg);
+    }
+
+    .orange-block.reveal-left .orange-block-back {
+      transform: rotateY(-180deg);
+    }
+
+    .orange-block.reveal-right .orange-block-back {
+      transform: rotateY(180deg);
+    }
+
+    .orange-block.flipped .orange-block-inner {
+      transform: rotateY(180deg);
+    }
+
+    .orange-block.flipped.reveal-down .orange-block-inner {
+      transform: rotateX(-180deg);
+      transform-origin: top center;
+    }
+
+    .orange-block.flipped.reveal-up .orange-block-inner {
+      transform: rotateX(180deg);
+      transform-origin: bottom center;
+    }
+
+    .orange-block.flipped.reveal-left .orange-block-inner {
+      transform: rotateY(-180deg);
+      transform-origin: center left;
+    }
+
+    .orange-block.flipped.reveal-right .orange-block-inner {
+      transform: rotateY(180deg);
+      transform-origin: center right;
+    }
+
   </style>
 </head>
   <body>
@@ -241,6 +383,7 @@
     </div>
 
     <!-- ==================== ABOUT ==================== -->
+    <div class="about-scroll-container" id="about-container">
     <section class="split-section" id="about">
       <div class="about-top-gradient"></div>
       <div class="split-inner">
@@ -266,6 +409,143 @@
         </div>
       </div>
     </section>
+    </div>
+
+    <!-- ==================== ORANGE BLOCKS ==================== -->
+    <div class="orange-scroll-container" id="orange-container">
+      <div class="orange-sticky">
+        <div class="orange-rectangle" id="orange-rectangle">
+          <div class="orange-block" data-row="0" data-col="0" data-index="0">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="3">busi</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="0" data-col="1" data-index="1">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="1">We</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="0" data-col="2" data-index="2">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="3">-</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="0" data-col="3" data-index="3">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="1">help</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="0" data-col="4" data-index="4">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="3" data-word="ness">ness</div>
+              <div class="orange-block-back" data-seq="3" data-word="that">that</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="1" data-col="0" data-index="5">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="4">you</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="1" data-col="1" data-index="6">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="2">esta</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="1" data-col="2" data-index="7">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="1"><img src="./ChatGPT Image Aug 25, 2026, 12_09_08 AM.png" alt="" /></div>
+              <div class="orange-block-back" data-seq="2">-</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="1" data-col="3" data-index="8">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="2">blish</div>
+              <div class="orange-block-back" data-seq="4">grow</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="1" data-col="4" data-index="9">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back"></div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="2" data-col="0" data-index="10">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back"></div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="2" data-col="1" data-index="11">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back"></div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="2" data-col="2" data-index="12">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="3">online</div>
+              <div class="orange-block-back" data-seq="4"><img src="./123.png" alt="" /></div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="2" data-col="3" data-index="13">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="1"><img src="./ChatGPT Image Aug 25, 2026, 12_09_30 AM.png" alt="" /></div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="2" data-col="4" data-index="14">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="2">your</div>
+              <div class="orange-block-back" data-seq="4">faster</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="3" data-col="0" data-index="15">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="4">and</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="3" data-col="1" data-index="16">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="1">you</div>
+              <div class="orange-block-back" data-seq="2"><img src="./image123.png" alt="" /></div>
+              <div class="orange-block-back" data-seq="4">fly</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="3" data-col="2" data-index="17">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="4">higher</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="3" data-col="3" data-index="18">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="3">so</div>
+            </div>
+          </div>
+          <div class="orange-block" data-row="3" data-col="4" data-index="19">
+            <div class="orange-block-inner">
+              <div class="orange-block-front"></div>
+              <div class="orange-block-back" data-seq="3" data-word="that">that</div>
+              <div class="orange-block-back" data-seq="4"><video autoplay loop muted playsinline src="./Loading 40 _ Paperplane.webm"></video></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script>
     (function() {
@@ -650,13 +930,15 @@
       }
 
       function getAboutProgress() {
-        if (!aboutSection) return 0;
-        const rect = aboutSection.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const triggerStart = windowHeight * 0.70;
-        const triggerEnd = windowHeight * 0.10;
-        const triggerRange = triggerStart - triggerEnd;
-        let progress = (triggerStart - rect.top) / triggerRange;
+        const container = document.getElementById('about-container');
+        if (!container || !aboutSection) return 0;
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const containerTop = container.offsetTop;
+        const containerHeight = container.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const scrollableDistance = containerHeight - viewportHeight;
+        if (scrollableDistance <= 0) return 0;
+        let progress = (scrollTop - containerTop) / scrollableDistance;
         return Math.max(0, Math.min(1, progress));
       }
 
@@ -668,7 +950,7 @@
         const mottoLines = document.querySelectorAll('.split-motto .reveal-motto-line');
 
         if (aboutLabel) {
-          const raw = Math.max(0, Math.min(1, progress / 0.10));
+          const raw = Math.max(0, Math.min(1, progress / 0.065));
           const p = easeOutCubic(raw);
           const scale = 0.85 + p * 0.15;
           aboutLabel.style.transform = 'scale(' + scale + ')';
@@ -676,9 +958,9 @@
         }
 
         const titleCount = titleWords.length;
-        const titleSlot = 0.03;
-        const titleAnim = 0.025;
-        const titleStart = 0.12;
+        const titleSlot = 0.0195;
+        const titleAnim = 0.01625;
+        const titleStart = 0.078;
         titleWords.forEach((word, i) => {
           const start = titleStart + i * titleSlot;
           const end = start + titleAnim;
@@ -689,9 +971,9 @@
         });
 
         const textCount = textLines.length;
-        const textGroupStart = 0.38;
-        const textSlot = 0.14;
-        const textAnim = 0.11;
+        const textGroupStart = 0.247;
+        const textSlot = 0.091;
+        const textAnim = 0.0715;
         textLines.forEach((line, i) => {
           const start = textGroupStart + i * textSlot;
           const end = start + textAnim;
@@ -702,9 +984,9 @@
         });
 
         const mottoCount = mottoLines.length;
-        const mottoGroupStart = 0.85;
-        const mottoSlot = 0.04;
-        const mottoAnim = 0.035;
+        const mottoGroupStart = 0.5525;
+        const mottoSlot = 0.026;
+        const mottoAnim = 0.02275;
         mottoLines.forEach((line, i) => {
           const start = mottoGroupStart + i * mottoSlot;
           const end = start + mottoAnim;
@@ -897,56 +1179,8 @@
         tmpEuler: new THREE.Euler(),
         floatPhase: Math.random() * Math.PI * 2,
         armBones: [],
-        armBaseQuats: [],
-        rhombusData: [],
-        gridHalf: 0
+        armBaseQuats: []
       };
-
-      const gridMaterial = new THREE.LineBasicMaterial({ color: 0x4a4a4a, transparent: true, opacity: 0.3 });
-      const gridGroup = new THREE.Group();
-      const gridSize = 1.85;
-      state.gridHalf = gridSize / 2;
-      const gridStep = gridSize / 3;
-      const points = [];
-      for (let i = 1; i < 3; i++) {
-        const x = -state.gridHalf + i * gridStep;
-        points.push(new THREE.Vector3(x, -state.gridHalf, 0), new THREE.Vector3(x, state.gridHalf, 0));
-      }
-      for (let i = 1; i < 3; i++) {
-        const y = -state.gridHalf + i * gridStep;
-        points.push(new THREE.Vector3(-state.gridHalf, y, 0), new THREE.Vector3(state.gridHalf, y, 0));
-      }
-      const gridGeom = new THREE.BufferGeometry().setFromPoints(points);
-      const gridLines = new THREE.LineSegments(gridGeom, gridMaterial);
-      gridGroup.add(gridLines);
-      gridGroup.position.y = -0.05;
-      scene.add(gridGroup);
-
-      const rhombusCount = 12;
-      const rhombusGroup = new THREE.Group();
-      const rhombusMaterial = new THREE.MeshBasicMaterial({ color: 0x8a8a8a, transparent: true, opacity: 0.18, side: THREE.DoubleSide, depthWrite: false });
-      const rhombusGeom = new THREE.PlaneGeometry(0.08, 0.08);
-      const rhombusData = [];
-      for (let i = 0; i < rhombusCount; i++) {
-        const mesh = new THREE.Mesh(rhombusGeom, rhombusMaterial);
-        mesh.rotation.z = Math.PI / 4;
-        mesh.position.set(
-          (Math.random() - 0.5) * gridSize,
-          (Math.random() - 0.5) * gridSize,
-          0.01
-        );
-        mesh.scale.setScalar(0.6 + Math.random() * 0.8);
-        rhombusGroup.add(mesh);
-        rhombusData.push({
-          mesh,
-          vx: (Math.random() - 0.5) * 0.15,
-          vy: (Math.random() - 0.5) * 0.12,
-          phase: Math.random() * Math.PI * 2,
-          baseOpacity: 0.08 + Math.random() * 0.1
-        });
-      }
-      state.rhombusData = rhombusData;
-      scene.add(rhombusGroup);
 
       const smokeCanvas = document.createElement('canvas');
       smokeCanvas.width = 256;
@@ -1134,25 +1368,6 @@
               bone.quaternion.copy(base).multiply(state.tmpQuat);
             });
           }
-
-          if (state.rhombusData.length > 0) {
-            state.rhombusData.forEach((data) => {
-              const mesh = data.mesh;
-              const drift = Math.sin(t * 0.4 + data.phase) * 0.08;
-              const driftY = Math.cos(t * 0.35 + data.phase + 1) * 0.06;
-              mesh.position.x += data.vx * 0.3;
-              mesh.position.y += data.vy * 0.3;
-              mesh.position.x += drift * 0.15;
-              mesh.position.y += driftY * 0.15;
-              const half = state.gridHalf * 0.95;
-              if (mesh.position.x > half) mesh.position.x = -half;
-              if (mesh.position.x < -half) mesh.position.x = half;
-              if (mesh.position.y > half) mesh.position.y = -half;
-              if (mesh.position.y < -half) mesh.position.y = half;
-              const opacity = data.baseOpacity + Math.sin(t * 0.6 + data.phase) * 0.04;
-              mesh.material.opacity = Math.max(0.02, Math.min(0.22, opacity));
-            });
-          }
         }
 
         renderer.render(scene, camera);
@@ -1161,6 +1376,417 @@
       window.addEventListener('resize', resize);
       resize();
       requestAnimationFrame(animate);
+    })();
+    </script>
+
+    <script>
+    (function() {
+      const aboutSection = document.getElementById('about');
+      if (!aboutSection) return;
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function getAboutProgress() {
+        const container = document.getElementById('about-container');
+        if (!container || !aboutSection) return 0;
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const containerTop = container.offsetTop;
+        const containerHeight = container.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const scrollableDistance = containerHeight - viewportHeight;
+        if (scrollableDistance <= 0) return 0;
+        let progress = (scrollTop - containerTop) / scrollableDistance;
+        return Math.max(0, Math.min(1, progress));
+      }
+
+      function updateAboutBackground() {
+        const progress = getAboutProgress();
+
+        const bgStart = 0.7;
+        const bgEnd = 1.0;
+        let bgProgress = 0;
+        if (progress > bgStart) {
+          bgProgress = (progress - bgStart) / (bgEnd - bgStart);
+        }
+        bgProgress = Math.max(0, Math.min(1, bgProgress));
+        const bgEased = easeOutCubic(bgProgress);
+        const bg = Math.round(bgEased * 255);
+        aboutSection.style.backgroundColor = 'rgb(' + bg + ', ' + bg + ', ' + bg + ')';
+
+        const textStart = 0.85;
+        let textProgress = 0;
+        if (progress > textStart) {
+          textProgress = (progress - textStart) / (1.0 - textStart);
+        }
+        textProgress = Math.max(0, Math.min(1, textProgress));
+        const textEased = easeOutCubic(textProgress);
+
+        const splitContent = aboutSection.querySelector('.split-content');
+        if (splitContent) {
+          splitContent.style.opacity = (1 - textEased).toFixed(3);
+        }
+      }
+
+      function update() {
+        updateAboutBackground();
+      }
+
+      window.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+    </script>
+
+    <script>
+    (function() {
+      const orangeContainer = document.getElementById('orange-container');
+      const orangeBlocks = document.querySelectorAll('.orange-block');
+      if (!orangeContainer || !orangeBlocks.length) return;
+
+      let currentPhase = 0;
+
+      const firstSeqCards = [
+        { row: 0, col: 1 },
+        { row: 0, col: 3 },
+        { row: 1, col: 2 },
+        { row: 2, col: 3 },
+        { row: 3, col: 1 },
+      ];
+
+      const secondSeqCards = [
+        { row: 1, col: 1 },
+        { row: 1, col: 2 },
+        { row: 1, col: 3 },
+        { row: 2, col: 4 },
+        { row: 3, col: 1 },
+      ];
+
+      const thirdSeqCards = [
+        { row: 0, col: 0 },
+        { row: 0, col: 2 },
+        { row: 0, col: 4, word: 'ness' },
+        { row: 2, col: 2 },
+        { row: 3, col: 3 },
+        { row: 3, col: 4, word: 'that' },
+      ];
+
+      const fourthSeqCards = [
+        { row: 1, col: 0 },
+        { row: 1, col: 3 },
+        { row: 2, col: 2 },
+        { row: 2, col: 4 },
+        { row: 3, col: 0 },
+        { row: 3, col: 1 },
+        { row: 3, col: 2 },
+        { row: 3, col: 4 },
+      ];
+
+      const cardsFlippedAtPhase = {
+        0: [],
+        1: [firstSeqCards[0]],
+        2: [firstSeqCards[0]],
+        3: [firstSeqCards[0]],
+        4: [firstSeqCards[0], firstSeqCards[1]],
+        5: [firstSeqCards[0], firstSeqCards[1]],
+        6: [firstSeqCards[0], firstSeqCards[1]],
+        7: [firstSeqCards[0], firstSeqCards[1], firstSeqCards[2]],
+        8: [firstSeqCards[0], firstSeqCards[1], firstSeqCards[2]],
+        9: [firstSeqCards[0], firstSeqCards[1], firstSeqCards[2]],
+        10: [firstSeqCards[0], firstSeqCards[1], firstSeqCards[2], firstSeqCards[3]],
+        11: [firstSeqCards[0], firstSeqCards[1], firstSeqCards[2], firstSeqCards[3]],
+        12: [firstSeqCards[0], firstSeqCards[1], firstSeqCards[2], firstSeqCards[3]],
+        13: [firstSeqCards[0], firstSeqCards[1], firstSeqCards[2], firstSeqCards[3], firstSeqCards[4]],
+        14: [firstSeqCards[0], firstSeqCards[1], firstSeqCards[2], firstSeqCards[3], firstSeqCards[4]],
+        15: [firstSeqCards[0], firstSeqCards[1], firstSeqCards[2], firstSeqCards[3], firstSeqCards[4]],
+        16: [],
+        17: [],
+        18: [secondSeqCards[0]],
+        19: [secondSeqCards[0]],
+        20: [secondSeqCards[0]],
+        21: [secondSeqCards[0], secondSeqCards[1]],
+        22: [secondSeqCards[0], secondSeqCards[1]],
+        23: [secondSeqCards[0], secondSeqCards[1]],
+        24: [secondSeqCards[0], secondSeqCards[1], secondSeqCards[2]],
+        25: [secondSeqCards[0], secondSeqCards[1], secondSeqCards[2]],
+        26: [secondSeqCards[0], secondSeqCards[1], secondSeqCards[2]],
+        27: [secondSeqCards[0], secondSeqCards[1], secondSeqCards[2], secondSeqCards[3]],
+        28: [secondSeqCards[0], secondSeqCards[1], secondSeqCards[2], secondSeqCards[3]],
+        29: [secondSeqCards[0], secondSeqCards[1], secondSeqCards[2], secondSeqCards[3]],
+        30: [secondSeqCards[0], secondSeqCards[1], secondSeqCards[2], secondSeqCards[3], secondSeqCards[4]],
+        31: [secondSeqCards[0], secondSeqCards[1], secondSeqCards[2], secondSeqCards[3], secondSeqCards[4]],
+        32: [secondSeqCards[0], secondSeqCards[1], secondSeqCards[2], secondSeqCards[3], secondSeqCards[4]],
+        33: [],
+        34: [],
+        35: [thirdSeqCards[0]],
+        36: [thirdSeqCards[0]],
+        37: [thirdSeqCards[0]],
+        38: [thirdSeqCards[0], thirdSeqCards[1]],
+        39: [thirdSeqCards[0], thirdSeqCards[1]],
+        40: [thirdSeqCards[0], thirdSeqCards[1]],
+        41: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[2]],
+        42: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[2]],
+        43: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[2]],
+        44: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[2], thirdSeqCards[3]],
+        45: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[2], thirdSeqCards[3]],
+        46: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[2], thirdSeqCards[3]],
+        47: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[2], thirdSeqCards[3], thirdSeqCards[4]],
+        48: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[2], thirdSeqCards[3], thirdSeqCards[4]],
+        49: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[2], thirdSeqCards[3], thirdSeqCards[4]],
+        50: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[3], thirdSeqCards[4]],
+        51: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[3], thirdSeqCards[4]],
+        52: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[5], thirdSeqCards[3], thirdSeqCards[4]],
+        53: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[5], thirdSeqCards[3], thirdSeqCards[4]],
+        54: [thirdSeqCards[0], thirdSeqCards[1], thirdSeqCards[5], thirdSeqCards[3], thirdSeqCards[4]],
+        55: [],
+        56: [],
+        57: [fourthSeqCards[0]],
+        58: [fourthSeqCards[0]],
+        59: [fourthSeqCards[0]],
+        60: [fourthSeqCards[0], fourthSeqCards[1]],
+        61: [fourthSeqCards[0], fourthSeqCards[1]],
+        62: [fourthSeqCards[0], fourthSeqCards[1]],
+        63: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2]],
+        64: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2]],
+        65: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2]],
+        66: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3]],
+        67: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3]],
+        68: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4]],
+        69: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4]],
+        70: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4]],
+        71: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4], fourthSeqCards[5]],
+        72: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4], fourthSeqCards[5]],
+        73: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4], fourthSeqCards[5]],
+        74: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4], fourthSeqCards[5], fourthSeqCards[6]],
+        75: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4], fourthSeqCards[5], fourthSeqCards[6]],
+        76: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4], fourthSeqCards[5], fourthSeqCards[6]],
+        77: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4], fourthSeqCards[5], fourthSeqCards[6], fourthSeqCards[7]],
+        78: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4], fourthSeqCards[5], fourthSeqCards[6], fourthSeqCards[7]],
+        79: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4], fourthSeqCards[5], fourthSeqCards[6], fourthSeqCards[7]],
+        80: [fourthSeqCards[0], fourthSeqCards[1], fourthSeqCards[2], fourthSeqCards[3], fourthSeqCards[4], fourthSeqCards[5], fourthSeqCards[6], fourthSeqCards[7]],
+      };
+
+      const activeSeqAtPhase = {
+        0: 0,
+        1: 1,
+        2: 1,
+        3: 1,
+        4: 1,
+        5: 1,
+        6: 1,
+        7: 1,
+        8: 1,
+        9: 1,
+        10: 1,
+        11: 1,
+        12: 1,
+        13: 1,
+        14: 1,
+        15: 1,
+        16: 1,
+        17: 0,
+        18: 2,
+        19: 2,
+        20: 2,
+        21: 2,
+        22: 2,
+        23: 2,
+        24: 2,
+        25: 2,
+        26: 2,
+        27: 2,
+        28: 2,
+        29: 2,
+        30: 2,
+        31: 2,
+        32: 2,
+        33: 2,
+        34: 0,
+        35: 3,
+        36: 3,
+        37: 3,
+        38: 3,
+        39: 3,
+        40: 3,
+        41: 3,
+        42: 3,
+        43: 3,
+        44: 3,
+        45: 3,
+        46: 3,
+        47: 3,
+        48: 3,
+        49: 3,
+        50: 3,
+        51: 3,
+        52: 3,
+        53: 3,
+        54: 3,
+        55: 0,
+        56: 4,
+        57: 4,
+        58: 4,
+        59: 4,
+        60: 4,
+        61: 4,
+        62: 4,
+        63: 4,
+        64: 4,
+        65: 4,
+        66: 4,
+        67: 4,
+        68: 4,
+        69: 4,
+        70: 4,
+        71: 4,
+        72: 4,
+        73: 4,
+        74: 4,
+        75: 4,
+        76: 4,
+        77: 4,
+        78: 4,
+        79: 4,
+        80: 4,
+      };
+
+      const activeWordAtPhaseForCell = {
+        41: { row: 0, col: 4, word: 'ness' },
+        42: { row: 0, col: 4, word: 'ness' },
+        43: { row: 0, col: 4, word: 'ness' },
+        44: { row: 0, col: 4, word: 'ness' },
+        45: { row: 0, col: 4, word: 'ness' },
+        46: { row: 0, col: 4, word: 'ness' },
+        47: { row: 0, col: 4, word: 'ness' },
+        48: { row: 0, col: 4, word: 'ness' },
+        49: { row: 0, col: 4, word: 'ness' },
+        50: { row: 0, col: 4, word: null },
+        51: { row: 0, col: 4, word: null },
+        52: { row: 3, col: 4, word: 'that' },
+        53: { row: 3, col: 4, word: 'that' },
+        54: { row: 3, col: 4, word: 'that' },
+      };
+
+      function getOrangeProgress() {
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const containerTop = orangeContainer.offsetTop;
+        const containerHeight = orangeContainer.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const scrollableDistance = containerHeight - viewportHeight;
+        if (scrollableDistance <= 0) return 0;
+        return (scrollTop - containerTop) / scrollableDistance;
+      }
+
+      function getBlock(row, col) {
+        return Array.from(orangeBlocks).find(
+          (b) => parseInt(b.dataset.row) === row && parseInt(b.dataset.col) === col
+        );
+      }
+
+      function setCardFlipped(row, col, flipped) {
+        const block = getBlock(row, col);
+        if (!block) return;
+        if (flipped) {
+          block.classList.add('flipped');
+        } else {
+          block.classList.remove('flipped');
+        }
+      }
+
+      function setActiveBackFace(row, col, seq, word) {
+        const block = getBlock(row, col);
+        if (!block) return;
+        const backFaces = block.querySelectorAll('.orange-block-back');
+        backFaces.forEach((face) => {
+          const faceSeq = face.dataset.seq;
+          const faceWord = face.dataset.word;
+          if (seq && faceSeq === String(seq)) {
+            if (word && faceWord === word) {
+              face.classList.add('active');
+            } else if (!word && !faceWord) {
+              face.classList.add('active');
+            } else if (!word && faceSeq === String(seq)) {
+              face.classList.add('active');
+            } else {
+              face.classList.remove('active');
+            }
+          } else {
+            face.classList.remove('active');
+          }
+        });
+      }
+
+      function updateOrangeBlocks() {
+        const rawProgress = getOrangeProgress();
+
+        const blockRevealEnd = 0.06;
+        let blockCount = 0;
+        if (rawProgress > 0) {
+          const blockProgress = Math.min(1, rawProgress / blockRevealEnd);
+          blockCount = Math.min(20, Math.floor(blockProgress * 20) + 1);
+        }
+
+        orangeBlocks.forEach((block, index) => {
+          if (index < blockCount) {
+            block.classList.add('visible');
+          } else {
+            block.classList.remove('visible');
+          }
+        });
+
+        let contentPhase = 0;
+        if (rawProgress > blockRevealEnd) {
+          const contentProgress = (rawProgress - blockRevealEnd) / (1 - blockRevealEnd);
+          contentPhase = Math.min(80, Math.floor(contentProgress * 80) + 1);
+        }
+
+        if (contentPhase === currentPhase) return;
+        currentPhase = contentPhase;
+
+        const activeSeq = activeSeqAtPhase[contentPhase] || 0;
+        const activeWord = activeWordAtPhaseForCell[contentPhase] || null;
+
+        const allContentCards = [
+          { row: 0, col: 1 },
+          { row: 0, col: 3 },
+          { row: 1, col: 1 },
+          { row: 1, col: 2 },
+          { row: 1, col: 3 },
+          { row: 2, col: 3 },
+          { row: 2, col: 4 },
+          { row: 3, col: 1 },
+          { row: 0, col: 0 },
+          { row: 0, col: 2 },
+          { row: 0, col: 4 },
+          { row: 2, col: 2 },
+          { row: 3, col: 3 },
+          { row: 3, col: 4 },
+          { row: 1, col: 0 },
+          { row: 3, col: 0 },
+          { row: 3, col: 2 },
+        ];
+
+        const shouldBeFlipped = cardsFlippedAtPhase[contentPhase] || [];
+
+        allContentCards.forEach(({ row, col }) => {
+          const block = getBlock(row, col);
+          const flipCard = shouldBeFlipped.some(
+            (c) => c.row === row && c.col === col
+          );
+          setCardFlipped(row, col, flipCard);
+
+          let word = null;
+          if (activeWord && activeWord.row === row && activeWord.col === col) {
+            word = activeWord.word;
+          }
+          setActiveBackFace(row, col, flipCard ? activeSeq : 0, word);
+        });
+      }
+
+      window.addEventListener('scroll', () => requestAnimationFrame(updateOrangeBlocks), { passive: true });
+      window.addEventListener('resize', updateOrangeBlocks);
+      updateOrangeBlocks();
     })();
     </script>
   </body>
