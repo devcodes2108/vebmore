@@ -13,6 +13,7 @@
     window.THREE = window.THREE || {};
   </script>
   <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.clouds.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.fog.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: auto; }
@@ -112,26 +113,38 @@
     .site-nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center;
       justify-content: space-between; padding: 1.25rem clamp(1.5rem, 4vw, 3rem);
-      mix-blend-mode: difference; pointer-events: none;
+      background: rgba(255, 255, 255, 0.10);
+      border: 2px solid rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 0 0 16px 16px;
+      pointer-events: none;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .site-nav.nav-hidden {
+      transform: translateY(-120%);
     }
 
     .site-nav > * { pointer-events: auto; }
 
     .nav-logo {
-      font-size: 0.72rem; font-weight: 800; letter-spacing: 0.32em; text-transform: uppercase;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.35em; text-transform: uppercase;
       color: #ffffff; text-decoration: none; transition: color 0.6s ease;
     }
 
     .nav-links { display: flex; gap: 1.75rem; list-style: none; }
 
     .nav-links a {
-      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
-      color: #ffffff; text-decoration: none; transition: color 0.6s ease, opacity 0.3s ease; opacity: 0.85;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase;
+      color: #ffffff; text-decoration: none; transition: color 0.6s ease, opacity 0.3s ease; opacity: 0.9;
     }
 
     .nav-links a:hover { opacity: 1; }
 
-    .site-nav.nav-light .nav-logo, .site-nav.nav-light .nav-links a { color: #0a0a0a; }
+    .site-nav.nav-light .nav-logo, .site-nav.nav-light .nav-links a { color: #ffffff; }
 
 
 
@@ -146,20 +159,47 @@
       padding: clamp(2.5rem, 5vw, 5.5rem) 0;
     }
 
+    #vanta-about {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    #vanta-about.visible {
+      opacity: 1;
+    }
+
+    #vanta-about canvas {
+      pointer-events: none;
+    }
+
+    #about-black-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: #000000;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 1;
+    }
+
     .about-top-gradient {
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 100px;
       background: linear-gradient(180deg, rgba(30, 20, 15, 0.9) 0%, #000000 100%);
       pointer-events: none;
-      z-index: 0;
+      z-index: 2;
     }
 
     .split-inner {
       width: min(calc(100% - 48px), 1200px); margin-inline: auto; display: grid;
       gap: 3rem; align-items: center;
       position: relative;
-      z-index: 1;
+      z-index: 3;
     }
 
     @media (min-width: 768px) { .split-inner { grid-template-columns: 1fr 1fr; gap: 4rem; } }
@@ -177,17 +217,18 @@
     }
 
     .split-text {
-      font-size: clamp(0.95rem, 1.4vw, 1.1rem); line-height: 1.75; color: rgba(255, 255, 255, 0.85); max-width: 52ch;
+      font-size: clamp(0.95rem, 1.4vw, 1.1rem); line-height: 1.75; color: #000000; max-width: 52ch;
+      font-family: Georgia, "Times New Roman", serif; margin-top: 0.5rem;
     }
 
     .split-motto {
-      margin-top: 2.25rem; padding-top: 1.75rem; border-top: 1px solid rgba(255, 255, 255, 0.12);
+      margin-top: 2.25rem; padding-top: 1.75rem; border-top: none;
       font-family: Montserrat, sans-serif; font-size: clamp(1.2rem, 2vw, 1.55rem);
-      font-weight: 500; line-height: 1.55; color: #ffffff;
+      font-weight: 500; line-height: 1.55; color: #000000;
     }
 
-    .split-motto strong { font-weight: 700; color: #ffffff; }
-    .split-motto em { font-style: italic; color: #ffffff; font-weight: 500; }
+    .split-motto strong { font-weight: 700; color: #000000; }
+    .split-motto em { font-style: italic; color: #000000; font-weight: 500; }
 
     .split-visual { position: relative; min-height: 500px; overflow: visible; }
 
@@ -248,12 +289,29 @@
       background: #ffffff;
     }
 
+    #vanta-fog {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #vanta-fog canvas {
+      pointer-events: none;
+    }
+
     .orange-rectangle {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       grid-template-rows: repeat(4, 1fr);
       width: min(65vw, 850px);
       aspect-ratio: 5 / 3.5;
+      position: relative;
+      z-index: 1;
     }
 
     .orange-block {
@@ -273,7 +331,7 @@
       width: 100%;
       height: 100%;
       transform-style: preserve-3d;
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .orange-block.flipped .orange-block-inner {
@@ -292,7 +350,7 @@
     }
 
     .orange-block-front {
-      background: #c29264;
+      background: #F47A24;
     }
 
     .orange-block-back {
@@ -394,6 +452,8 @@
     <!-- ==================== ABOUT ==================== -->
     <div class="about-scroll-container" id="about-container">
     <section class="split-section" id="about">
+      <div id="vanta-about"></div>
+      <div id="about-black-overlay"></div>
       <div class="about-top-gradient"></div>
       <div class="split-inner">
         <div class="split-content reveal-stagger">
@@ -423,6 +483,7 @@
     <!-- ==================== ORANGE BLOCKS ==================== -->
     <div class="orange-scroll-container" id="orange-container">
       <div class="orange-sticky">
+        <div id="vanta-fog"></div>
         <div class="orange-rectangle" id="orange-rectangle">
           <div class="orange-block" data-row="0" data-col="0" data-index="0">
             <div class="orange-block-inner">
@@ -843,10 +904,10 @@
           gyroControls: false,
           minHeight: 200.00,
           minWidth: 200.00,
-          skyColor: 0xc5911f,
-          cloudColor: 0xdec5ad,
-          sunColor: 0xfc981b,
-          sunGlareColor: 0xfc981b,
+          skyColor: 0xC96A32,
+          cloudColor: 0xF2C09A,
+          sunColor: 0xF47A24,
+          sunGlareColor: 0xFFB15C,
           speed: 0.8
         });
         console.log('Vanta effect created:', vantaEffect);
@@ -876,10 +937,10 @@
       // Color palettes for each stage
       const palettes = {
         sunset: {
-          sky: hexToRgb('#c5911f'),
-          cloud: hexToRgb('#dec5ad'),
-          sun: hexToRgb('#fc981b'),
-          sunGlare: hexToRgb('#fc981b')
+          sky: hexToRgb('#C96A32'),
+          cloud: hexToRgb('#F2C09A'),
+          sun: hexToRgb('#F47A24'),
+          sunGlare: hexToRgb('#FFB15C')
         },
         deepSunset: {
           sky: hexToRgb('#84692d'),
@@ -1622,6 +1683,102 @@
 
     <script>
     (function() {
+      // ========== VANTA CLOUDS FOR ABOUT SECTION ==========
+      let vantaAboutEffect = null;
+
+      function initVantaAbout() {
+        if (vantaAboutEffect) return;
+        if (typeof VANTA === 'undefined') {
+          console.error('VANTA not loaded for About section');
+          return;
+        }
+        vantaAboutEffect = VANTA.CLOUDS({
+          el: "#vanta-about",
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          skyColor: 0x101B3A,
+          cloudColor: 0xD6DCE8,
+          cloudShadowColor: 0x1C2942,
+          sunColor: 0x1a2a4a,
+          sunGlareColor: 0x2a3a5a,
+          speed: 0.3
+        });
+        console.log('Vanta About effect created:', vantaAboutEffect);
+      }
+
+      function getAboutProgress() {
+        const container = document.getElementById('about-container');
+        const aboutSection = document.getElementById('about');
+        if (!container || !aboutSection) return 0;
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const containerTop = container.offsetTop;
+        const containerHeight = container.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const scrollableDistance = containerHeight - viewportHeight;
+        if (scrollableDistance <= 0) return 0;
+        let progress = (scrollTop - containerTop) / scrollableDistance;
+        return Math.max(0, Math.min(1, progress));
+      }
+
+      function updateVantaAbout() {
+        const vantaEl = document.getElementById('vanta-about');
+        const blackOverlay = document.getElementById('about-black-overlay');
+        if (!vantaEl) return;
+
+        const progress = getAboutProgress();
+
+        // Show Vanta when About section becomes active (first 5% of scroll)
+        if (progress > 0.02) {
+          vantaEl.classList.add('visible');
+        } else {
+          vantaEl.classList.remove('visible');
+        }
+
+        // Black overlay: fade from 1 to 0 over first 15% of About scroll
+        if (blackOverlay) {
+          if (progress < 0.15) {
+            // Smooth ease-out curve for black fade
+            const blackProgress = progress / 0.15;
+            const blackOpacity = 1 - Math.pow(blackProgress, 0.7);
+            blackOverlay.style.opacity = blackOpacity.toFixed(3);
+          } else {
+            blackOverlay.style.opacity = '0';
+          }
+        }
+
+        // Fade out Vanta when background transitions to white (around 65-70%)
+        if (progress > 0.65) {
+          const fadeProgress = (progress - 0.65) / 0.35;
+          const opacity = Math.max(0, 1 - fadeProgress);
+          vantaEl.style.opacity = opacity.toFixed(3);
+        } else if (progress > 0.02) {
+          vantaEl.style.opacity = '1';
+        }
+      }
+
+      // Initialize Vanta About after a short delay
+      setTimeout(initVantaAbout, 200);
+
+      // Update on scroll
+      window.addEventListener("scroll", () => {
+        requestAnimationFrame(updateVantaAbout);
+      }, { passive: true });
+
+      // Cleanup on page unload
+      window.addEventListener("beforeunload", () => {
+        if (vantaAboutEffect) {
+          vantaAboutEffect.destroy();
+          vantaAboutEffect = null;
+        }
+      });
+    })();
+    </script>
+
+    <script>
+    (function() {
       const orangeContainer = document.getElementById('orange-container');
       const orangeBlocks = document.querySelectorAll('.orange-block');
       if (!orangeContainer || !orangeBlocks.length) return;
@@ -1968,6 +2125,124 @@
       window.addEventListener('scroll', () => requestAnimationFrame(updateOrangeBlocks), { passive: true });
       window.addEventListener('resize', updateOrangeBlocks);
       updateOrangeBlocks();
+    })();
+    </script>
+
+    <script>
+    (function() {
+      // ========== VANTA FOG FOR ORANGE BLOCKS SECTION ==========
+      let vantaFogEffect = null;
+
+      function initVantaFog() {
+        if (vantaFogEffect) return;
+        if (typeof VANTA === 'undefined') {
+          console.error('VANTA not loaded for Fog section');
+          return;
+        }
+        vantaFogEffect = VANTA.FOG({
+          el: "#vanta-fog",
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00
+        });
+        console.log('Vanta Fog effect created:', vantaFogEffect);
+      }
+
+      function getOrangeProgress() {
+        const container = document.getElementById('orange-container');
+        if (!container) return 0;
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const containerTop = container.offsetTop;
+        const containerHeight = container.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const scrollableDistance = containerHeight - viewportHeight;
+        if (scrollableDistance <= 0) return 0;
+        let progress = (scrollTop - containerTop) / scrollableDistance;
+        return Math.max(0, Math.min(1, progress));
+      }
+
+      function updateVantaFog() {
+        const fogEl = document.getElementById('vanta-fog');
+        if (!fogEl) return;
+
+        const rawProgress = getOrangeProgress();
+        const blockRevealEnd = 0.06;
+
+        // Only start fog after all blocks are formed (after 6% of scroll)
+        if (rawProgress <= blockRevealEnd) {
+          fogEl.style.opacity = '0';
+          return;
+        }
+
+        // Calculate fog progress from 0 to 1 after block formation
+        const fogProgress = (rawProgress - blockRevealEnd) / (1 - blockRevealEnd);
+        const clampedProgress = Math.max(0, Math.min(1, fogProgress));
+
+        // Apply opacity with a smooth curve (ease-in for subtle start)
+        const opacity = Math.pow(clampedProgress, 0.8);
+        fogEl.style.opacity = opacity.toFixed(3);
+      }
+
+      // Initialize Vanta Fog after a short delay
+      setTimeout(initVantaFog, 300);
+
+      // Update on scroll
+      window.addEventListener('scroll', () => {
+        requestAnimationFrame(updateVantaFog);
+      }, { passive: true });
+
+      // Cleanup on page unload
+      window.addEventListener("beforeunload", () => {
+        if (vantaFogEffect) {
+          vantaFogEffect.destroy();
+          vantaFogEffect = null;
+        }
+      });
+    })();
+    </script>
+
+    <script>
+    (function() {
+      // ========== NAVBAR SCROLL BEHAVIOR ==========
+      const navbar = document.querySelector('.site-nav');
+      if (!navbar) return;
+
+      let lastScrollY = window.scrollY;
+      let ticking = false;
+      const scrollThreshold = 10; // Minimum scroll before showing/hiding
+
+      function updateNavbar() {
+        const currentScrollY = window.scrollY;
+
+        // Don't do anything for tiny scroll movements
+        if (Math.abs(currentScrollY - lastScrollY) < scrollThreshold) {
+          ticking = false;
+          return;
+        }
+
+        if (currentScrollY > lastScrollY) {
+          // Scrolling DOWN - hide navbar
+          navbar.classList.add('nav-hidden');
+        } else {
+          // Scrolling UP - show navbar
+          navbar.classList.remove('nav-hidden');
+        }
+
+        lastScrollY = currentScrollY;
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateNavbar);
+          ticking = true;
+        }
+      }, { passive: true });
+
+      // Show navbar on page load
+      navbar.classList.remove('nav-hidden');
     })();
     </script>
   </body>
