@@ -7,6 +7,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script>
+    // Ensure THREE is available globally for Vanta
+    window.THREE = window.THREE || {};
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.clouds.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: auto; }
@@ -49,12 +55,6 @@
 
     #hero-canvas { display: block; position: relative; z-index: 2; }
 
-    #hero-bg-img {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: cover; filter: blur(40px) brightness(1.1);
-      z-index: 1; pointer-events: none; transform: scale(1.15);
-    }
-
     #hero-tint {
       position: absolute; inset: 0;
       background: linear-gradient(180deg, rgba(194, 146, 100, 0.18) 0%, rgba(30, 20, 15, 0.35) 100%);
@@ -64,6 +64,15 @@
     #hero-bg-black {
       position: absolute; inset: 0; background: #000000;
       opacity: 1; pointer-events: none; z-index: 0;
+    }
+
+    #vanta-bg {
+      position: absolute; inset: 0;
+      z-index: 1; pointer-events: none;
+    }
+
+    #vanta-bg canvas {
+      pointer-events: none;
     }
 
     .hero-loader {
@@ -364,7 +373,7 @@
     <!-- ==================== HERO ==================== -->
     <div class="hero-scroll-container" id="hero-container">
       <div class="hero-sticky">
-        <img id="hero-bg-img" alt="" aria-hidden="true" />
+        <div id="vanta-bg"></div>
         <div id="hero-tint"></div>
         <div id="hero-bg-black"></div>
         <div class="hero-frame-wrap">
@@ -712,11 +721,6 @@
           ctx.globalAlpha = 1;
         }
 
-        const bgImg = document.getElementById('hero-bg-img');
-        if (bgImg) {
-          bgImg.style.opacity = 0.35 * (1 - fadeToBlack);
-        }
-
         const heroTint = document.getElementById('hero-tint');
         if (heroTint) {
           heroTint.style.opacity = 1 - fadeToBlack;
@@ -785,11 +789,6 @@
 
         renderFromScroll();
 
-        const bgCanvas = document.getElementById('hero-bg-img');
-        if (bgCanvas) {
-          bgCanvas.src = `${FRAME_PATH}${FRAME_PREFIX}${String(1).padStart(4, "0")}${FRAME_EXTENSION}`;
-        }
-
         let index = 1;
         const loadBatch = () => {
           const end = Math.min(index + BATCH_SIZE, frameCount);
@@ -819,6 +818,188 @@
       window.addEventListener("beforeunload", () => {
         if (rafId) cancelAnimationFrame(rafId);
         if (loadTimeout) clearTimeout(loadTimeout);
+        if (vantaEffect) {
+          vantaEffect.destroy();
+          vantaEffect = null;
+        }
+      });
+    })();
+
+    // ========== VANTA CLOUDS BACKGROUND ==========
+    (function() {
+      let vantaEffect = null;
+
+      function initVanta() {
+        console.log('initVanta called, VANTA:', typeof VANTA);
+        if (vantaEffect) return;
+        if (typeof VANTA === 'undefined') {
+          console.error('VANTA is not defined - library not loaded');
+          return;
+        }
+        vantaEffect = VANTA.CLOUDS({
+          el: "#vanta-bg",
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          skyColor: 0xc5911f,
+          cloudColor: 0xdec5ad,
+          sunColor: 0xfc981b,
+          sunGlareColor: 0xfc981b,
+          speed: 0.8
+        });
+        console.log('Vanta effect created:', vantaEffect);
+      }
+
+      function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null;
+      }
+
+      function lerpColor(c1, c2, t) {
+        return {
+          r: Math.round(c1.r + (c2.r - c1.r) * t),
+          g: Math.round(c1.g + (c2.g - c1.g) * t),
+          b: Math.round(c1.b + (c2.b - c1.b) * t)
+        };
+      }
+
+      function rgbToHex(r, g, b) {
+        return ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+      }
+
+      // Color palettes for each stage
+      const palettes = {
+        sunset: {
+          sky: hexToRgb('#c5911f'),
+          cloud: hexToRgb('#dec5ad'),
+          sun: hexToRgb('#fc981b'),
+          sunGlare: hexToRgb('#fc981b')
+        },
+        deepSunset: {
+          sky: hexToRgb('#84692d'),
+          cloud: hexToRgb('#b8a08a'),
+          sun: hexToRgb('#291e11'),
+          sunGlare: hexToRgb('#6f3521')
+        },
+        twilight: {
+          sky: hexToRgb('#273b3a'),
+          cloud: hexToRgb('#adbbde'),
+          sun: hexToRgb('#1a2530'),
+          sunGlare: hexToRgb('#2a3545')
+        },
+        night: {
+          sky: hexToRgb('#101820'),
+          cloud: hexToRgb('#26303b'),
+          sun: hexToRgb('#080d12'),
+          sunGlare: hexToRgb('#111820')
+        },
+        black: {
+          sky: hexToRgb('#000000'),
+          cloud: hexToRgb('#000000'),
+          sun: hexToRgb('#000000'),
+          sunGlare: hexToRgb('#000000')
+        }
+      };
+
+      function getInterpolatedPalette(progress) {
+        let p1, p2, localT;
+
+        if (progress < 0.25) {
+          p1 = palettes.sunset;
+          p2 = palettes.deepSunset;
+          localT = progress / 0.25;
+        } else if (progress < 0.5) {
+          p1 = palettes.deepSunset;
+          p2 = palettes.twilight;
+          localT = (progress - 0.25) / 0.25;
+        } else if (progress < 0.75) {
+          p1 = palettes.twilight;
+          p2 = palettes.night;
+          localT = (progress - 0.5) / 0.25;
+        } else {
+          p1 = palettes.night;
+          p2 = palettes.black;
+          localT = (progress - 0.75) / 0.25;
+        }
+
+        return {
+          sky: lerpColor(p1.sky, p2.sky, localT),
+          cloud: lerpColor(p1.cloud, p2.cloud, localT),
+          sun: lerpColor(p1.sun, p2.sun, localT),
+          sunGlare: lerpColor(p1.sunGlare, p2.sunGlare, localT)
+        };
+      }
+
+      function updateVantaColors() {
+        if (!vantaEffect) return;
+
+        const container = document.getElementById("hero-container");
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const containerTop = container.offsetTop;
+        const containerHeight = container.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        const scrollableDistance = containerHeight - viewportHeight;
+
+        if (scrollableDistance <= 0) return;
+
+        let progress = (scrollTop - containerTop) / scrollableDistance;
+        progress = Math.max(0, Math.min(1, progress));
+
+        const palette = getInterpolatedPalette(progress);
+
+        vantaEffect.setOptions({
+          skyColor: parseInt(rgbToHex(palette.sky.r, palette.sky.g, palette.sky.b), 16),
+          cloudColor: parseInt(rgbToHex(palette.cloud.r, palette.cloud.g, palette.cloud.b), 16),
+          sunColor: parseInt(rgbToHex(palette.sun.r, palette.sun.g, palette.sun.b), 16),
+          sunGlareColor: parseInt(rgbToHex(palette.sunGlare.r, palette.sunGlare.g, palette.sunGlare.b), 16)
+        });
+
+        // Fade out vanta container as we approach the end
+        const vantaEl = document.getElementById('vanta-bg');
+        if (vantaEl) {
+          if (progress > 0.9) {
+            vantaEl.style.opacity = String(1 - (progress - 0.9) / 0.1);
+          } else {
+            vantaEl.style.opacity = '1';
+          }
+        }
+      }
+
+      console.log('Vanta IIFE starting, VANTA:', typeof VANTA, 'THREE:', typeof THREE);
+      // Initialize Vanta immediately
+      if (typeof VANTA !== 'undefined') {
+        initVanta();
+      } else {
+        console.error('VANTA not loaded, retrying in 500ms');
+        setTimeout(() => {
+          if (typeof VANTA !== 'undefined') {
+            initVanta();
+          } else {
+            console.error('VANTA still not loaded after retry');
+          }
+        }, 500);
+      }
+
+      // Add scroll listener for Vanta color updates
+      window.addEventListener("scroll", () => {
+        requestAnimationFrame(updateVantaColors);
+      }, { passive: true });
+
+      // Initial color update
+      setTimeout(updateVantaColors, 200);
+
+      // Cleanup on page unload
+      window.addEventListener("beforeunload", () => {
+        if (vantaEffect) {
+          vantaEffect.destroy();
+          vantaEffect = null;
+        }
       });
     })();
     </script>
