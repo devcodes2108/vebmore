@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "python -m http.server 3001",
     "build": "node build.js",
-    "preview": "cd dist && python -m http.server 3001"
+    "preview": "cd dist && python -m http.server 3001",
+    "deploy": "npm run build && npx wrangler deploy"
   },
   "dependencies": {
     "draco3d": "^1.5.7",
